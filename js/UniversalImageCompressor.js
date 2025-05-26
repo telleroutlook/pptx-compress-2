@@ -24,18 +24,72 @@ class UniversalImageCompressor {
                     const response = await fetch(imageData);
                     if (!response.ok) throw new Error('Failed to fetch image data');
                     
-                    const bitmap = await createImageBitmap(await response.blob());
-                    const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-                    const ctx = canvas.getContext('2d');
+                    const blob = await response.blob();
                     
-                    if (!ctx) throw new Error('Failed to get canvas context');
+                    // Handle special file formats
+                    const fileType = blob.type.toLowerCase();
+                    const fileName = settings.originalName?.toLowerCase() || '';
                     
-                    ctx.drawImage(bitmap, 0, 0);
+                    // List of formats that should be passed through without processing
+                    const passThroughFormats = [
+                        'image/svg+xml',
+                        'image/tiff',
+                        'image/x-tiff',
+                        'image/tif',
+                        'image/x-tif',
+                        'image/x-emf',
+                        'image/emf',
+                        'application/x-emf',
+                        'application/emf'
+                    ];
+                    
+                    // Check if file should be passed through
+                    if (passThroughFormats.includes(fileType) || 
+                        fileName.endsWith('.svg') || 
+                        fileName.endsWith('.tiff') || 
+                        fileName.endsWith('.tif') ||
+                        fileName.endsWith('.emf')) {
+                        
+                        // For special formats, return the original blob
+                        self.postMessage({
+                            blob: blob,
+                            width: 0,
+                            height: 0,
+                            originalSize: settings.originalSize,
+                            hasTransparency: true,
+                            outputFormat: fileType.split('/')[1] || 'unknown'
+                        });
+                        return;
+                    }
+                    
+                    // For supported formats, proceed with normal processing
+                    const bitmap = await createImageBitmap(blob);
+                    
+                    // Check if PNG format or has transparency
+                    const isPNG = blob.type === 'image/png' || settings.originalName?.toLowerCase().endsWith('.png');
+                    let hasTransparency = false;
+                    
+                    // Create temporary canvas to check transparency
+                    const testCanvas = new OffscreenCanvas(bitmap.width, bitmap.height);
+                    const testCtx = testCanvas.getContext('2d');
+                    testCtx.drawImage(bitmap, 0, 0);
+                    
+                    // Check for transparent pixels
+                    if (isPNG) {
+                        const imageData = testCtx.getImageData(0, 0, bitmap.width, bitmap.height);
+                        const data = imageData.data;
+                        for (let i = 3; i < data.length; i += 4) {
+                            if (data[i] < 255) {
+                                hasTransparency = true;
+                                break;
+                            }
+                        }
+                    }
                     
                     let width = bitmap.width;
                     let height = bitmap.height;
                     
-                    // 尺寸限制
+                    // Size limits
                     if (width > settings.maxWidth) {
                         height = (settings.maxWidth * height) / width;
                         width = settings.maxWidth;
@@ -45,7 +99,7 @@ class UniversalImageCompressor {
                         height = settings.maxHeight;
                     }
                     
-                    // 缩放处理
+                    // Scale processing
                     width = Math.max(1, Math.round(width * settings.scale));
                     height = Math.max(1, Math.round(height * settings.scale));
                     
@@ -54,9 +108,15 @@ class UniversalImageCompressor {
                     
                     if (!resizedCtx) throw new Error('Failed to get resized canvas context');
                     
+                    // Set white background for non-transparent images
+                    if (!hasTransparency) {
+                        resizedCtx.fillStyle = '#FFFFFF';
+                        resizedCtx.fillRect(0, 0, width, height);
+                    }
+                    
                     resizedCtx.drawImage(bitmap, 0, 0, width, height);
                     
-                    // 质量调整
+                    // Quality adjustment
                     let quality = Math.max(0.1, Math.min(1, settings.quality));
                     if (settings.mode === 'aggressive') {
                         quality *= 0.8;
@@ -64,18 +124,28 @@ class UniversalImageCompressor {
                         quality *= 0.6;
                     }
                     
-                    const blob = await resizedCanvas.convertToBlob({ 
-                        type: 'image/' + settings.format, 
-                        quality: quality 
-                    });
+                    // Determine output format based on transparency
+                    let outputFormat = settings.format;
+                    if (hasTransparency && (settings.format === 'jpeg' || settings.format === 'jpg')) {
+                        outputFormat = 'png';
+                    }
+                    
+                    const blobOptions = { type: 'image/' + outputFormat };
+                    if (outputFormat !== 'png') {
+                        blobOptions.quality = quality;
+                    }
+                    
+                    const resultBlob = await resizedCanvas.convertToBlob(blobOptions);
                     
                     bitmap.close();
                     
                     self.postMessage({
-                        blob: blob,
+                        blob: resultBlob,
                         width: width,
                         height: height,
-                        originalSize: settings.originalSize
+                        originalSize: settings.originalSize,
+                        hasTransparency: hasTransparency,
+                        outputFormat: outputFormat
                     });
                 } catch (error) {
                     self.postMessage({ error: error.message });
@@ -91,7 +161,12 @@ class UniversalImageCompressor {
      * @returns {Promise<Object>} 压缩结果
      */
     async compressImage(file, settings = {}) {
-        const compressionSettings = { ...this.options, ...settings, originalSize: file.size };
+        const compressionSettings = { 
+            ...this.options, 
+            ...settings, 
+            originalSize: file.size,
+            originalName: file.name || ''
+        };
         
         return new Promise((resolve, reject) => {
             const timeout = setTimeout(() => {
@@ -113,7 +188,7 @@ class UniversalImageCompressor {
                         if (event.data.error) {
                             reject(new Error(event.data.error));
                         } else {
-                            const { blob, width, height } = event.data;
+                            const { blob, width, height, hasTransparency, outputFormat } = event.data;
                             if (!blob) {
                                 reject(new Error('No blob received from worker'));
                                 return;
@@ -126,6 +201,8 @@ class UniversalImageCompressor {
                                 originalSize: file.size,
                                 width: width,
                                 height: height,
+                                hasTransparency: hasTransparency,
+                                outputFormat: outputFormat,
                                 compressionRatio: ((file.size - blob.size) / file.size * 100).toFixed(1)
                             });
                         }
