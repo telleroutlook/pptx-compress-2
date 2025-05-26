@@ -2,6 +2,8 @@ class PPTXProcessor {
     constructor() {
         this.mediaFiles = [];
         this.compressedMediaFiles = [];
+        this.originalPptxSize = 0;
+        this.compressedPptxSize = 0;
     }
 
     /**
@@ -45,6 +47,9 @@ class PPTXProcessor {
         try {
             const zip = await JSZip.loadAsync(originalPptx);
             
+            // 记录原始PPTX文件大小
+            this.originalPptxSize = originalPptx.size;
+            
             // 更新压缩后的媒体文件
             for (const media of compressedMedia) {
                 if (media.compressedBlob) {
@@ -61,6 +66,9 @@ class PPTXProcessor {
                 }
             });
             
+            // 记录压缩后PPTX文件大小
+            this.compressedPptxSize = content.size;
+            
             return content;
         } catch (error) {
             throw new Error(`Failed to repack PPTX: ${error.message}`);
@@ -76,13 +84,16 @@ class PPTXProcessor {
         const compressedSize = this.compressedMediaFiles.reduce((sum, media) => 
             sum + (media.compressedBlob ? media.compressedBlob.size : media.file.size), 0);
         
+        // 计算整个PPTX文件的压缩率
+        const totalCompressionRatio = this.originalPptxSize > 0 ? 
+            ((this.originalPptxSize - this.compressedPptxSize) / this.originalPptxSize * 100).toFixed(1) : 0;
+        
         return {
             totalFiles: this.mediaFiles.length,
             originalSize: originalSize,
             compressedSize: compressedSize,
             savedSize: originalSize - compressedSize,
-            compressionRatio: originalSize > 0 ? 
-                ((originalSize - compressedSize) / originalSize * 100).toFixed(1) : 0
+            compressionRatio: totalCompressionRatio
         };
     }
 

@@ -3,7 +3,7 @@ import PPTXCompressor from './PPTXCompressor.js';
 class PPTXCompressorApp {
     constructor() {
         this.compressor = new PPTXCompressor({
-            format: 'jpeg',
+            format: 'webp',
             quality: 0.7,
             maxWidth: 1600,
             maxHeight: 1200,
@@ -133,7 +133,7 @@ class PPTXCompressorApp {
 
         // Update summary stats
         document.getElementById('totalFiles').textContent = this.formatFileSize(result.stats.originalSize);
-        document.getElementById('totalSaved').textContent = this.formatFileSize(result.stats.savedSize);
+        document.getElementById('totalSaved').textContent = this.formatFileSize(result.stats.compressedSize);
         document.getElementById('avgCompression').textContent = `${result.stats.compressionRatio}%`;
 
         // Create download link

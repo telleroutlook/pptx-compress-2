@@ -6,7 +6,7 @@ class PPTXCompressor {
         this.pptxProcessor = new PPTXProcessor();
         this.imageCompressor = new UniversalImageCompressor(options);
         this.compressionOptions = {
-            format: options.format || 'jpeg',
+            format: options.format || 'webp',
             quality: options.quality || 0.7,
             maxWidth: options.maxWidth || 1600,
             maxHeight: options.maxHeight || 1200,

@@ -8,7 +8,7 @@ export const imageCompressorConfig = {
     quality: 0.9,  // Increased quality from 0.8 to 0.9
     
     // Other settings
-    format: 'jpeg',
+    format: 'webp',  // Changed from jpeg to webp
     scale: 1,
     mode: 'aggressive',
     preserveMetadata: false
