@@ -83,6 +83,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            position: relative;
         }
 
         .upload-area:hover, .upload-area.dragover {
@@ -94,6 +95,20 @@
 
         .upload-content {
             pointer-events: none;
+            position: relative;
+            z-index: 1;
+        }
+
+        #fileInput {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+            z-index: 2;
+            font-size: 0;
         }
 
         .upload-icon {
@@ -536,74 +551,33 @@
                     <p>Automatically finds and compresses all images in your PPTX files</p>
                 </div>
                 <div class="feature-item">
-                    <h3>Batch Processing</h3>
-                    <p>Process multiple PPTX files simultaneously</p>
-                </div>
-                <div class="feature-item">
                     <h3>Quality Control</h3>
                     <p>Maintain visual quality while achieving maximum compression</p>
+                </div>
+                <div class="feature-item">
+                    <h3>Fast Processing</h3>
+                    <p>Efficient compression using Web Workers</p>
                 </div>
             </div>
         </section>
 
         <section id="uploadArea" class="upload-area">
-            <input type="file" id="fileInput" multiple accept=".pptx" style="display: none;">
-            <label for="fileInput" class="upload-content">
+            <input type="file" id="fileInput" accept=".pptx">
+            <div class="upload-content">
                 <div class="upload-icon">📊</div>
-                <h2>Drop your PPTX files here</h2>
-                <p>or click to select files</p>
-            </label>
+                <h2>Drop your PPTX file here</h2>
+                <p>or click to select file</p>
+            </div>
         </section>
 
-        <section id="fileList" class="file-list">
-            <div class="file-list-header">
-                <h3>Selected Files</h3>
-                <div class="file-stats">
-                    <span id="fileCount">0</span> files
-                    <span class="separator">|</span>
-                    Total: <span id="totalSize">0 KB</span>
-                </div>
-            </div>
-            <div id="filesContainer" class="files-container"></div>
-        </section>
-
-        <section id="controlsPanel" class="controls-panel">
-            <div class="control-group">
-                <h3>Image Output Format</h3>
-                <div class="format-buttons">
-                    <button class="format-btn active" data-format="jpeg">JPEG</button>
-                    <button class="format-btn" data-format="webp">WebP</button>
-                </div>
-                <p id="formatDescription" class="format-description">
-                    <strong>JPEG</strong>: Best for photographs. Excellent compression with minimal quality loss.
-                </p>
-            </div>
-
-            <div class="control-group">
-                <h3>Compression Settings</h3>
-                <div class="slider-control">
-                    <label for="qualitySlider">Quality:</label>
-                    <input type="range" id="qualitySlider" min="0.3" max="0.9" step="0.1" value="0.7">
-                    <span id="qualityValue">0.7</span>
-                </div>
-                <div class="slider-control">
-                    <label for="scaleSlider">Scale:</label>
-                    <input type="range" id="scaleSlider" min="0.5" max="1" step="0.1" value="0.9">
-                    <span id="scaleValue">90%</span>
-                </div>
-            </div>
-
-            <button id="convertBtn" class="convert-btn">Compress PPTX Files</button>
-        </section>
-
-        <section id="progressSection" class="progress-section">
+        <section id="progressSection" class="progress-section" style="display: none;">
             <div class="progress-bar">
                 <div id="progressFill" class="progress-fill"></div>
             </div>
             <p id="progressText" class="progress-text">Processing...</p>
         </section>
 
-        <section id="summaryStats" class="summary-stats">
+        <section id="summaryStats" class="summary-stats" style="display: none;">
             <h3>Compression Summary</h3>
             <div class="summary-grid">
                 <div class="summary-item">
@@ -618,20 +592,12 @@
                     <span class="summary-value" id="avgCompression">0%</span>
                     <div class="summary-label">Avg. Compression</div>
                 </div>
-                <div class="summary-item">
-                    <span class="summary-value" id="processingTime">0s</span>
-                    <div class="summary-label">Processing Time</div>
-                </div>
             </div>
         </section>
 
-        <section id="resultsSection" class="results-section">
+        <section id="resultsSection" class="results-section" style="display: none;">
             <div class="results-header">
                 <h3>Compression Results</h3>
-                <div class="results-actions">
-                    <button id="downloadAllBtn" class="batch-btn">Download All</button>
-                    <button id="clearBtn" class="batch-btn">Clear All</button>
-                </div>
             </div>
             <div id="resultsContainer" class="results-container"></div>
         </section>
@@ -639,287 +605,7 @@
         <div id="statusMessage" class="status-message"></div>
     </div>
 
-    <script>
-        // Universal Image Compression Engine
-        class UniversalImageCompressor {
-            constructor() {
-                this.worker = this.createCompressionWorker();
-            }
-
-            createCompressionWorker() {
-                const workerCode = `
-                    self.onmessage = async function(e) {
-                        const { imageData, settings } = e.data;
-                        try {
-                            const response = await fetch(imageData);
-                            if (!response.ok) throw new Error('Failed to fetch image data');
-                            
-                            const bitmap = await createImageBitmap(await response.blob());
-                            const canvas = new OffscreenCanvas(bitmap.width, bitmap.height);
-                            const ctx = canvas.getContext('2d');
-                            
-                            if (!ctx) throw new Error('Failed to get canvas context');
-                            
-                            ctx.drawImage(bitmap, 0, 0);
-                            
-                            let width = Math.round(bitmap.width * settings.scale);
-                            let height = Math.round(bitmap.height * settings.scale);
-                            
-                            // Apply maximum dimension constraints if provided
-                            if (settings.maxWidth && width > settings.maxWidth) {
-                                height = Math.round((settings.maxWidth * height) / width);
-                                width = settings.maxWidth;
-                            }
-                            if (settings.maxHeight && height > settings.maxHeight) {
-                                width = Math.round((settings.maxHeight * width) / height);
-                                height = settings.maxHeight;
-                            }
-                            
-                            width = Math.max(1, width);
-                            height = Math.max(1, height);
-                            
-                            const resizedCanvas = new OffscreenCanvas(width, height);
-                            const resizedCtx = resizedCanvas.getContext('2d');
-                            
-                            if (!resizedCtx) throw new Error('Failed to get resized canvas context');
-                            
-                            resizedCtx.drawImage(bitmap, 0, 0, width, height);
-                            
-                            // Aggressive compression for maximum size reduction
-                            let quality = Math.max(0.1, Math.min(0.9, settings.quality * 0.8));
-                            
-                            const blob = await resizedCanvas.convertToBlob({ 
-                                type: 'image/' + settings.format, 
-                                quality: quality 
-                            });
-                            
-                            bitmap.close();
-                            
-                            self.postMessage({
-                                blob: blob,
-                                width: width,
-                                height: height,
-                                originalSize: settings.originalSize
-                            });
-                        } catch (error) {
-                            self.postMessage({ error: error.message });
-                        }
-                    };
-                `;
-                
-                return new Worker(URL.createObjectURL(new Blob([workerCode], { type: 'text/javascript' })));
-            }
-
-            async compressImage(imageBlob, settings = {}) {
-                const defaultSettings = {
-                    format: 'jpeg',
-                    quality: 0.7,
-                    scale: 0.9,
-                    maxWidth: null,
-                    maxHeight: null,
-                    originalSize: imageBlob.size
-                };
-
-                const finalSettings = { ...defaultSettings, ...settings };
-                
-                return new Promise((resolve, reject) => {
-                    const timeout = setTimeout(() => {
-                        reject(new Error('Compression timeout'));
-                    }, 30000);
-                    
-                    const imageUrl = URL.createObjectURL(imageBlob);
-                    
-                    const handleMessage = (event) => {
-                        clearTimeout(timeout);
-                        this.worker.removeEventListener('message', handleMessage);
-                        URL.revokeObjectURL(imageUrl);
-                        
-                        if (event.data.error) {
-                            reject(new Error(event.data.error));
-                        } else {
-                            resolve({
-                                blob: event.data.blob,
-                                width: event.data.width,
-                                height: event.data.height,
-                                originalSize: event.data.originalSize,
-                                compressedSize: event.data.blob.size
-                            });
-                        }
-                    };
-                    
-                    this.worker.addEventListener('message', handleMessage);
-                    this.worker.postMessage({
-                        imageData: imageUrl,
-                        settings: finalSettings
-                    });
-                });
-            }
-
-            async compressBatch(imageBlobs, settings = {}, progressCallback = null) {
-                const results = [];
-                const total = imageBlobs.length;
-                
-                for (let i = 0; i < total; i++) {
-                    try {
-                        const result = await this.compressImage(imageBlobs[i], settings);
-                        results.push(result);
-                        
-                        if (progressCallback) {
-                            progressCallback({
-                                current: i + 1,
-                                total: total,
-                                progress: ((i + 1) / total) * 100,
-                                currentResult: result
-                            });
-                        }
-                    } catch (error) {
-                        console.error('Failed to compress image:', error);
-                        if (progressCallback) {
-                            progressCallback({
-                                current: i + 1,
-                                total: total,
-                                progress: ((i + 1) / total) * 100,
-                                error: error
-                            });
-                        }
-                    }
-                }
-                
-                return results;
-            }
-
-            destroy() {
-                if (this.worker) {
-                    this.worker.terminate();
-                    this.worker = null;
-                }
-            }
-        }
-
-        // PPTX Compressor Class
-        class PPTXCompressor {
-            constructor() {
-                this.selectedFiles = [];
-                this.compressedResults = [];
-                this.imageCompressor = new UniversalImageCompressor();
-                this.settings = {
-                    format: 'jpeg',
-                    quality: 0.7,
-                    scale: 0.9
-                };
-                
-                this.initializeElements();
-                this.bindEvents();
-                this.loadSettings();
-            }
-            
-            initializeElements() {
-                this.uploadArea = document.getElementById('uploadArea');
-                this.fileInput = document.getElementById('fileInput');
-                this.fileList = document.getElementById('fileList');
-                this.controlsPanel = document.getElementById('controlsPanel');
-                this.convertBtn = document.getElementById('convertBtn');
-                this.progressSection = document.getElementById('progressSection');
-                this.resultsSection = document.getElementById('resultsSection');
-                this.summaryStats = document.getElementById('summaryStats');
-                this.statusMessage = document.getElementById('statusMessage');
-                
-                this.qualitySlider = document.getElementById('qualitySlider');
-                this.qualityValue = document.getElementById('qualityValue');
-                this.scaleSlider = document.getElementById('scaleSlider');
-                this.scaleValue = document.getElementById('scaleValue');
-                
-                this.progressFill = document.getElementById('progressFill');
-                this.progressText = document.getElementById('progressText');
-                
-                this.resultsContainer = document.getElementById('resultsContainer');
-                this.downloadAllBtn = document.getElementById('downloadAllBtn');
-                this.clearBtn = document.getElementById('clearBtn');
-            }
-            
-            loadSettings() {
-                // Settings would be stored in memory instead of localStorage
-                this.updateUIFromSettings();
-            }
-            
-            updateUIFromSettings() {
-                const formatBtn = document.querySelector(`.format-btn[data-format="${this.settings.format}"]`);
-                if (formatBtn) {
-                    document.querySelectorAll('.format-btn[data-format]').forEach(b => b.classList.remove('active'));
-                    formatBtn.classList.add('active');
-                }
-                
-                this.qualitySlider.value = this.settings.quality;
-                this.qualityValue.textContent = this.settings.quality;
-                this.scaleSlider.value = this.settings.scale;
-                this.scaleValue.textContent = Math.round(this.settings.scale * 100) + '%';
-            }
-            
-            bindEvents() {
-                // File upload events
-                this.uploadArea.addEventListener('dragover', this.handleDragOver.bind(this));
-                this.uploadArea.addEventListener('dragleave', this.handleDragLeave.bind(this));
-                this.uploadArea.addEventListener('drop', this.handleDrop.bind(this));
-                this.fileInput.addEventListener('change', this.handleFileSelect.bind(this));
-                
-                // Format selection
-                document.querySelectorAll('.format-btn[data-format]').forEach(btn => {
-                    btn.addEventListener('click', () => {
-                        document.querySelectorAll('.format-btn[data-format]').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        this.settings.format = btn.dataset.format;
-                        
-                        const formatDesc = document.getElementById('formatDescription');
-                        switch(btn.dataset.format) {
-                            case 'jpeg':
-                                formatDesc.innerHTML = '<strong>JPEG</strong>: Best for photographs. Excellent compression with minimal quality loss.';
-                                break;
-                            case 'webp':
-                                formatDesc.innerHTML = '<strong>WebP</strong>: Modern format with superior compression. Best balance of quality and file size.';
-                                break;
-                        }
-                    });
-                });
-                
-                // Settings controls
-                this.qualitySlider.addEventListener('input', (e) => {
-                    this.settings.quality = parseFloat(e.target.value);
-                    this.qualityValue.textContent = this.settings.quality;
-                });
-                
-                this.scaleSlider.addEventListener('input', (e) => {
-                    this.settings.scale = parseFloat(e.target.value);
-                    this.scaleValue.textContent = Math.round(this.settings.scale * 100) + '%';
-                });
-                
-                // Action buttons
-                this.convertBtn.addEventListener('click', this.startCompression.bind(this));
-                this.downloadAllBtn.addEventListener('click', this.downloadAll.bind(this));
-                this.clearBtn.addEventListener('click', this.clearAll.bind(this));
-            }
-            
-            handleDragOver(e) {
-                e.preventDefault();
-                this.uploadArea.classList.add('dragover');
-            }
-            
-            handleDragLeave(e) {
-                e.preventDefault();
-                this.uploadArea.classList.remove('dragover');
-            }
-            
-            handleDrop(e) {
-                e.preventDefault();
-                this.uploadArea.classList.remove('dragover');
-                const files = Array.from(e.dataTransfer.files).filter(file => 
-                    file.name.toLowerCase().endsWith('.pptx'));
-                if (files.length > 0) {
-                    this.addFiles(files);
-                }
-            }
-            
-            handleFileSelect(e) {
-                const files = Array.from(e.target.files).filter(file => 
-                    file.name.toLowerCase().endsWith('.pptx'));
-                if (files.length > 0) {
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
                 
