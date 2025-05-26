@@ -1,3 +1,5 @@
+import JSZip from 'jszip';
+
 class PPTXProcessor {
     constructor() {
         this.mediaFiles = [];
@@ -6,17 +8,11 @@ class PPTXProcessor {
         this.compressedPptxSize = 0;
     }
 
-    /**
-     * 解压 PPTX 文件并提取媒体文件
-     * @param {File} pptxFile - PPTX 文件
-     * @returns {Promise<Array>} 媒体文件数组
-     */
     async extractMediaFiles(pptxFile) {
         try {
             const zip = await JSZip.loadAsync(pptxFile);
             this.mediaFiles = [];
             
-            // 遍历所有文件，找到媒体文件
             for (const [path, file] of Object.entries(zip.files)) {
                 if (path.startsWith('ppt/media/') && !file.dir) {
                     const blob = await file.async('blob');
@@ -37,27 +33,18 @@ class PPTXProcessor {
         }
     }
 
-    /**
-     * 使用压缩后的媒体文件重新打包 PPTX
-     * @param {File} originalPptx - 原始 PPTX 文件
-     * @param {Array} compressedMedia - 压缩后的媒体文件数组
-     * @returns {Promise<Blob>} 压缩后的 PPTX 文件
-     */
     async repackPPTX(originalPptx, compressedMedia) {
         try {
             const zip = await JSZip.loadAsync(originalPptx);
             
-            // 记录原始PPTX文件大小
             this.originalPptxSize = originalPptx.size;
             
-            // 更新压缩后的媒体文件
             for (const media of compressedMedia) {
                 if (media.compressedBlob) {
                     zip.file(media.path, media.compressedBlob);
                 }
             }
             
-            // 生成新的 PPTX 文件
             const content = await zip.generateAsync({
                 type: 'blob',
                 compression: 'DEFLATE',
@@ -66,7 +53,6 @@ class PPTXProcessor {
                 }
             });
             
-            // 记录压缩后PPTX文件大小
             this.compressedPptxSize = content.size;
             
             return content;
@@ -75,16 +61,11 @@ class PPTXProcessor {
         }
     }
 
-    /**
-     * 获取压缩统计信息
-     * @returns {Object} 压缩统计信息
-     */
     getCompressionStats() {
         const originalSize = this.mediaFiles.reduce((sum, media) => sum + media.file.size, 0);
         const compressedSize = this.compressedMediaFiles.reduce((sum, media) => 
             sum + (media.compressedBlob ? media.compressedBlob.size : media.file.size), 0);
         
-        // 计算整个PPTX文件的压缩率
         const totalCompressionRatio = this.originalPptxSize > 0 ? 
             ((this.originalPptxSize - this.compressedPptxSize) / this.originalPptxSize * 100).toFixed(1) : 0;
         
@@ -97,13 +78,10 @@ class PPTXProcessor {
         };
     }
 
-    /**
-     * 清理资源
-     */
     destroy() {
         this.mediaFiles = [];
         this.compressedMediaFiles = [];
     }
 }
 
-export default PPTXProcessor; 
+export default PPTXProcessor;

@@ -1,16 +1,32 @@
-// 通用图片压缩模块
-import { imageCompressorConfig } from './config/imageCompressorConfig.js';
-
 class UniversalImageCompressor {
     constructor(options = {}) {
         this.options = {
-            ...imageCompressorConfig,
+            format: 'webp',
+            quality: 0.7,
+            maxWidth: 1600,
+            maxHeight: 1200,
+            scale: 0.9,
+            mode: 'maximum',
             ...options
         };
         
+        this.supportedFormats = [
+            // Common formats
+            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp',
+            // Other browser supported formats
+            'ico', 'apng',
+            // Professional formats
+            'heic', 'heif', 'avif',
+            // Additional formats
+            'jfif', 'wmf'
+        ];
+        
         this.worker = this.createCompressionWorker();
-        this.compressionQueue = [];
-        this.isProcessing = false;
+    }
+
+    isFormatSupported(fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        return this.supportedFormats.includes(extension);
     }
 
     createCompressionWorker() {
@@ -22,56 +38,15 @@ class UniversalImageCompressor {
                     if (!response.ok) throw new Error('Failed to fetch image data');
                     
                     const blob = await response.blob();
-                    
-                    // Handle special file formats
-                    const fileType = blob.type.toLowerCase();
-                    const fileName = settings.originalName?.toLowerCase() || '';
-                    
-                    // List of formats that should be passed through without processing
-                    const passThroughFormats = [
-                        'image/svg+xml',
-                        'image/tiff',
-                        'image/x-tiff',
-                        'image/tif',
-                        'image/x-tif',
-                        'image/x-emf',
-                        'image/emf',
-                        'application/x-emf',
-                        'application/emf'
-                    ];
-                    
-                    // Check if file should be passed through
-                    if (passThroughFormats.includes(fileType) || 
-                        fileName.endsWith('.svg') || 
-                        fileName.endsWith('.tiff') || 
-                        fileName.endsWith('.tif') ||
-                        fileName.endsWith('.emf')) {
-                        
-                        // For special formats, return the original blob
-                        self.postMessage({
-                            blob: blob,
-                            width: 0,
-                            height: 0,
-                            originalSize: settings.originalSize,
-                            hasTransparency: true,
-                            outputFormat: fileType.split('/')[1] || 'unknown'
-                        });
-                        return;
-                    }
-                    
-                    // For supported formats, proceed with normal processing
                     const bitmap = await createImageBitmap(blob);
                     
-                    // Check if PNG format or has transparency
                     const isPNG = blob.type === 'image/png' || settings.originalName?.toLowerCase().endsWith('.png');
                     let hasTransparency = false;
                     
-                    // Create temporary canvas to check transparency
                     const testCanvas = new OffscreenCanvas(bitmap.width, bitmap.height);
                     const testCtx = testCanvas.getContext('2d');
                     testCtx.drawImage(bitmap, 0, 0);
                     
-                    // Check for transparent pixels
                     if (isPNG) {
                         const imageData = testCtx.getImageData(0, 0, bitmap.width, bitmap.height);
                         const data = imageData.data;
@@ -86,7 +61,6 @@ class UniversalImageCompressor {
                     let width = bitmap.width;
                     let height = bitmap.height;
                     
-                    // Size limits
                     if (width > settings.maxWidth) {
                         height = (settings.maxWidth * height) / width;
                         width = settings.maxWidth;
@@ -96,7 +70,6 @@ class UniversalImageCompressor {
                         height = settings.maxHeight;
                     }
                     
-                    // Scale processing
                     width = Math.max(1, Math.round(width * settings.scale));
                     height = Math.max(1, Math.round(height * settings.scale));
                     
@@ -105,7 +78,6 @@ class UniversalImageCompressor {
                     
                     if (!resizedCtx) throw new Error('Failed to get resized canvas context');
                     
-                    // Set white background for non-transparent images
                     if (!hasTransparency) {
                         resizedCtx.fillStyle = '#FFFFFF';
                         resizedCtx.fillRect(0, 0, width, height);
@@ -113,7 +85,6 @@ class UniversalImageCompressor {
                     
                     resizedCtx.drawImage(bitmap, 0, 0, width, height);
                     
-                    // Quality adjustment
                     let quality = Math.max(0.1, Math.min(1, settings.quality));
                     if (settings.mode === 'aggressive') {
                         quality *= 0.8;
@@ -121,7 +92,6 @@ class UniversalImageCompressor {
                         quality *= 0.6;
                     }
                     
-                    // Determine output format based on transparency
                     let outputFormat = settings.format;
                     if (hasTransparency && (settings.format === 'jpeg' || settings.format === 'jpg')) {
                         outputFormat = 'png';
@@ -151,13 +121,23 @@ class UniversalImageCompressor {
         `], { type: 'text/javascript' })));
     }
 
-    /**
-     * 压缩单个图片文件
-     * @param {File|Blob} file - 图片文件
-     * @param {Object} settings - 压缩设置
-     * @returns {Promise<Object>} 压缩结果
-     */
     async compressImage(file, settings = {}) {
+        // Check if file format is supported
+        if (!this.isFormatSupported(file.name)) {
+            return {
+                name: file.name,
+                size: file.size,
+                blob: file,
+                originalSize: file.size,
+                width: 0,
+                height: 0,
+                hasTransparency: false,
+                outputFormat: file.name.split('.').pop().toLowerCase(),
+                compressionRatio: 0,
+                skipped: true
+            };
+        }
+
         const compressionSettings = { 
             ...this.options, 
             ...settings, 
@@ -186,11 +166,6 @@ class UniversalImageCompressor {
                             reject(new Error(event.data.error));
                         } else {
                             const { blob, width, height, hasTransparency, outputFormat } = event.data;
-                            if (!blob) {
-                                reject(new Error('No blob received from worker'));
-                                return;
-                            }
-
                             resolve({
                                 name: file.name || 'compressed_image',
                                 size: blob.size,
@@ -221,13 +196,6 @@ class UniversalImageCompressor {
         });
     }
 
-    /**
-     * 批量压缩图片
-     * @param {Array} files - 图片文件数组
-     * @param {Object} settings - 压缩设置
-     * @param {Function} progressCallback - 进度回调函数
-     * @returns {Promise<Array>} 压缩结果数组
-     */
     async compressBatch(files, settings = {}, progressCallback = null) {
         const results = [];
         const totalFiles = files.length;
@@ -247,12 +215,17 @@ class UniversalImageCompressor {
                 const result = await this.compressImage(file, settings);
                 results.push(result);
 
+                if (result.skipped) {
+                    // Skip logging for unsupported formats
+                }
+
             } catch (error) {
                 console.error(`Failed to compress ${file.name}:`, error);
                 results.push({
                     name: file.name || `image_${i + 1}`,
                     error: error.message,
-                    originalSize: file.size
+                    originalSize: file.size,
+                    skipped: true
                 });
             }
         }
@@ -268,40 +241,10 @@ class UniversalImageCompressor {
         return results;
     }
 
-    /**
-     * 获取压缩统计信息
-     * @param {Array} results - 压缩结果数组
-     * @returns {Object} 统计信息
-     */
-    getCompressionStats(results) {
-        const successResults = results.filter(r => !r.error);
-        const totalOriginalSize = results.reduce((sum, r) => sum + r.originalSize, 0);
-        const totalCompressedSize = successResults.reduce((sum, r) => sum + r.size, 0);
-        const totalSaved = totalOriginalSize - totalCompressedSize;
-
-        return {
-            totalFiles: results.length,
-            successCount: successResults.length,
-            failedCount: results.length - successResults.length,
-            totalOriginalSize,
-            totalCompressedSize,
-            totalSaved,
-            averageCompressionRatio: totalOriginalSize > 0 ? 
-                ((totalSaved / totalOriginalSize) * 100).toFixed(1) : 0
-        };
-    }
-
-    /**
-     * 更新压缩设置
-     * @param {Object} newOptions - 新的压缩设置
-     */
     updateOptions(newOptions) {
         this.options = { ...this.options, ...newOptions };
     }
 
-    /**
-     * 销毁压缩器
-     */
     destroy() {
         if (this.worker) {
             this.worker.terminate();

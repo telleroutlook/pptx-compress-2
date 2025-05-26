@@ -15,15 +15,8 @@ class PPTXCompressor {
         };
     }
 
-    /**
-     * 压缩 PPTX 文件
-     * @param {File} pptxFile - PPTX 文件
-     * @param {Function} progressCallback - 进度回调函数
-     * @returns {Promise<Object>} 压缩结果
-     */
     async compressPPTX(pptxFile, progressCallback = null) {
         try {
-            // 1. 提取媒体文件
             if (progressCallback) {
                 progressCallback({
                     progress: 0.1,
@@ -38,7 +31,6 @@ class PPTXCompressor {
                 throw new Error('No media files found in PPTX');
             }
 
-            // 2. 压缩图片
             if (progressCallback) {
                 progressCallback({
                     progress: 0.2,
@@ -67,7 +59,6 @@ class PPTXCompressor {
                 }
             );
 
-            // 3. 更新压缩后的媒体文件
             if (progressCallback) {
                 progressCallback({
                     progress: 0.8,
@@ -81,7 +72,6 @@ class PPTXCompressor {
                 compressedBlob: compressedResults[index].blob
             }));
 
-            // 4. 重新打包 PPTX
             if (progressCallback) {
                 progressCallback({
                     progress: 0.9,
@@ -95,7 +85,6 @@ class PPTXCompressor {
                 this.pptxProcessor.compressedMediaFiles
             );
 
-            // 5. 获取压缩统计信息
             const stats = this.pptxProcessor.getCompressionStats();
 
             if (progressCallback) {
@@ -126,22 +115,15 @@ class PPTXCompressor {
         }
     }
 
-    /**
-     * 更新压缩选项
-     * @param {Object} newOptions - 新的压缩选项
-     */
     updateOptions(newOptions) {
         this.compressionOptions = { ...this.compressionOptions, ...newOptions };
         this.imageCompressor.updateOptions(this.compressionOptions);
     }
 
-    /**
-     * 清理资源
-     */
     destroy() {
         this.pptxProcessor.destroy();
         this.imageCompressor.destroy();
     }
 }
 
-export default PPTXCompressor; 
+export default PPTXCompressor;
