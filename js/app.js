@@ -18,9 +18,11 @@ class PPTXCompressorApp {
     initializeElements() {
         this.uploadArea = document.getElementById('uploadArea');
         this.fileInput = document.getElementById('fileInput');
-        this.progressSection = document.getElementById('progressSection');
-        this.progressFill = document.getElementById('progressFill');
-        this.progressText = document.getElementById('progressText');
+        this.progressSection = document.querySelector('.progress-section');
+        this.progressFill = document.querySelector('.progress-fill');
+        this.progressPercentage = document.querySelector('.progress-percentage');
+        this.progressFile = document.querySelector('.progress-file');
+        this.progressStatus = document.querySelector('.progress-status');
         this.resultsSection = document.getElementById('resultsSection');
         this.resultsContainer = document.getElementById('resultsContainer');
         this.summaryStats = document.getElementById('summaryStats');
@@ -84,12 +86,41 @@ class PPTXCompressorApp {
     showProgress() {
         this.progressSection.style.display = 'block';
         this.progressFill.style.width = '0%';
-        this.progressText.textContent = 'Starting...';
+        this.progressPercentage.textContent = '0%';
+        this.progressFile.textContent = 'Waiting for processing...';
+        this.progressStatus.textContent = 'Ready';
+
+        // Smooth scroll to progress section
+        setTimeout(() => {
+            this.progressSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start',
+                inline: 'nearest'
+            });
+        }, 100);
     }
 
     updateProgress(progress) {
-        this.progressFill.style.width = `${progress.progress}%`;
-        this.progressText.textContent = progress.message;
+        const percentage = Math.round(progress.progress * 100);
+        this.progressFill.style.width = `${percentage}%`;
+        this.progressPercentage.textContent = `${percentage}%`;
+        
+        // 更新文件名和状态显示
+        if (progress.fileName) {
+            this.progressFile.textContent = progress.fileName;
+        }
+        if (progress.status) {
+            this.progressStatus.textContent = progress.status;
+        }
+
+        // 根据进度更新状态样式
+        if (progress.progress === 1) {
+            this.progressStatus.style.color = '#28a745';
+        } else if (progress.status === 'Error occurred') {
+            this.progressStatus.style.color = '#dc3545';
+        } else {
+            this.progressStatus.style.color = '#667eea';
+        }
     }
 
     hideProgress() {
@@ -101,7 +132,7 @@ class PPTXCompressorApp {
         this.summaryStats.style.display = 'block';
 
         // Update summary stats
-        document.getElementById('totalFiles').textContent = result.stats.totalFiles;
+        document.getElementById('totalFiles').textContent = this.formatFileSize(result.stats.originalSize);
         document.getElementById('totalSaved').textContent = this.formatFileSize(result.stats.savedSize);
         document.getElementById('avgCompression').textContent = `${result.stats.compressionRatio}%`;
 
@@ -114,6 +145,15 @@ class PPTXCompressorApp {
         
         this.resultsContainer.innerHTML = '';
         this.resultsContainer.appendChild(downloadLink);
+
+        // Smooth scroll to results with a longer duration
+        setTimeout(() => {
+            this.resultsSection.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'start',
+                inline: 'nearest'
+            });
+        }, 300);
     }
 
     showStatus(message, type = 'info') {

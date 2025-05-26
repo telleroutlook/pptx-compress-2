@@ -1,14 +1,11 @@
 // 通用图片压缩模块
+import { imageCompressorConfig } from './config/imageCompressorConfig.js';
+
 class UniversalImageCompressor {
     constructor(options = {}) {
         this.options = {
-            format: options.format || 'jpeg',
-            quality: options.quality || 0.8,
-            maxWidth: options.maxWidth || 1600,
-            maxHeight: options.maxHeight || 1200,
-            scale: options.scale || 1,
-            mode: options.mode || 'aggressive',
-            preserveMetadata: options.preserveMetadata || false
+            ...imageCompressorConfig,
+            ...options
         };
         
         this.worker = this.createCompressionWorker();
@@ -241,11 +238,9 @@ class UniversalImageCompressor {
             try {
                 if (progressCallback) {
                     progressCallback({
-                        stage: 'processing',
-                        currentFile: i + 1,
-                        totalFiles: totalFiles,
+                        progress: i / totalFiles,
                         fileName: file.name || `image_${i + 1}`,
-                        progress: ((i / totalFiles) * 100).toFixed(1)
+                        status: 'Processing...'
                     });
                 }
 
@@ -264,10 +259,9 @@ class UniversalImageCompressor {
 
         if (progressCallback) {
             progressCallback({
-                stage: 'completed',
-                currentFile: totalFiles,
-                totalFiles: totalFiles,
-                progress: 100
+                progress: 1,
+                fileName: 'Batch processing completed',
+                status: 'Completed'
             });
         }
 

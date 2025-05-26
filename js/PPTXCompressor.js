@@ -26,9 +26,9 @@ class PPTXCompressor {
             // 1. 提取媒体文件
             if (progressCallback) {
                 progressCallback({
-                    stage: 'extracting',
-                    progress: 0,
-                    message: 'Extracting media files...'
+                    progress: 0.1,
+                    fileName: 'Extracting media files',
+                    status: 'Extracting...'
                 });
             }
 
@@ -41,9 +41,9 @@ class PPTXCompressor {
             // 2. 压缩图片
             if (progressCallback) {
                 progressCallback({
-                    stage: 'compressing',
-                    progress: 10,
-                    message: 'Compressing images...'
+                    progress: 0.2,
+                    fileName: 'Starting compression',
+                    status: 'Preparing...'
                 });
             }
 
@@ -53,16 +53,29 @@ class PPTXCompressor {
                 this.compressionOptions,
                 (progress) => {
                     if (progressCallback) {
+                        const currentFile = progress.currentFile || 0;
+                        const totalFiles = progress.totalFiles || imageFiles.length;
+                        const fileName = progress.fileName || `Image ${currentFile} of ${totalFiles}`;
+                        const stageProgress = 0.2 + (progress.progress * 0.6);
+                        
                         progressCallback({
-                            stage: 'compressing',
-                            progress: 10 + (progress.progress * 0.7),
-                            message: `Compressing image ${progress.currentFile}/${progress.totalFiles}...`
+                            progress: stageProgress,
+                            fileName: fileName,
+                            status: 'Compressing...'
                         });
                     }
                 }
             );
 
             // 3. 更新压缩后的媒体文件
+            if (progressCallback) {
+                progressCallback({
+                    progress: 0.8,
+                    fileName: 'Updating media files',
+                    status: 'Updating...'
+                });
+            }
+
             this.pptxProcessor.compressedMediaFiles = mediaFiles.map((media, index) => ({
                 ...media,
                 compressedBlob: compressedResults[index].blob
@@ -71,9 +84,9 @@ class PPTXCompressor {
             // 4. 重新打包 PPTX
             if (progressCallback) {
                 progressCallback({
-                    stage: 'repacking',
-                    progress: 80,
-                    message: 'Repacking PPTX...'
+                    progress: 0.9,
+                    fileName: 'Repacking PPTX',
+                    status: 'Repacking...'
                 });
             }
 
@@ -87,9 +100,9 @@ class PPTXCompressor {
 
             if (progressCallback) {
                 progressCallback({
-                    stage: 'completed',
-                    progress: 100,
-                    message: 'Compression completed'
+                    progress: 1,
+                    fileName: 'Compression completed',
+                    status: 'Completed'
                 });
             }
 
@@ -104,9 +117,9 @@ class PPTXCompressor {
         } catch (error) {
             if (progressCallback) {
                 progressCallback({
-                    stage: 'error',
                     progress: 0,
-                    message: error.message
+                    fileName: 'Error occurred',
+                    status: error.message
                 });
             }
             throw error;

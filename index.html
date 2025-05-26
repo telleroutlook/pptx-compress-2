@@ -570,19 +570,28 @@
             </div>
         </section>
 
-        <section id="progressSection" class="progress-section" style="display: none;">
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
+        <div class="progress-section">
+            <div class="progress-container">
+                <div class="progress-header">
+                    <div class="progress-title">Processing Progress</div>
+                    <div class="progress-percentage">0%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" style="width: 0%"></div>
+                </div>
+                <div class="progress-details">
+                    <div class="progress-file">Waiting for processing...</div>
+                    <div class="progress-status">Ready</div>
+                </div>
             </div>
-            <p id="progressText" class="progress-text">Processing...</p>
-        </section>
+        </div>
 
         <section id="summaryStats" class="summary-stats" style="display: none;">
             <h3>Compression Summary</h3>
             <div class="summary-grid">
                 <div class="summary-item">
-                    <span class="summary-value" id="totalFiles">0</span>
-                    <div class="summary-label">Files Processed</div>
+                    <span class="summary-value" id="totalFiles">0 MB</span>
+                    <div class="summary-label">Original Size</div>
                 </div>
                 <div class="summary-item">
                     <span class="summary-value" id="totalSaved">0 MB</span>
