@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Sitemap: https://pptx-compress.com/sitemap.xml
+
+# Disallow temporary files and uploads
+Disallow: /temp/
+Disallow: /uploads/ 
