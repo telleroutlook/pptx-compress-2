@@ -2,7 +2,7 @@
   <div class="container">
     <header class="text-center mb-8">
       <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">PPTX Compressor</h1>
-      <p class="subtitle">Compress your PowerPoint files while maintaining quality</p>
+      <p class="subtitle">Shrink your presentations without compromising visual excellence</p>
     </header>
     <FileUpload />
     <ProgressBar v-if="showProgress" />

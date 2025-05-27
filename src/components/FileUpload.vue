@@ -1,8 +1,8 @@
 <template>
   <section
     ref="uploadSectionRef"
-    class="relative border-4 border-dashed border-primary/70 rounded-xl p-12 text-center mb-8 transition-all duration-300 ease-in-out cursor-pointer group hover:border-secondary hover:bg-primary-light/5 hover:shadow-lg"
-    :class="{ 'border-secondary bg-primary-light/10 scale-[1.02]': isDragging }"
+    class="upload-area mb-8"
+    :class="{ dragover: isDragging }"
     @dragover.prevent="handleDragOver"
     @dragleave.prevent="handleDragLeave"
     @drop.prevent="handleDrop"
@@ -11,14 +11,14 @@
       type="file"
       ref="fileInput"
       accept=".pptx"
-      class="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+      class="hidden"
       @change="handleFileSelect"
       aria-label="Upload PPTX file"
     >
-    <div class="pointer-events-none transform transition-transform duration-300 group-hover:-translate-y-1">
-      <div class="text-7xl mb-6 transition-transform duration-300 group-hover:scale-110">📊</div>
-      <h2 class="text-3xl font-bold text-gray-800 mb-3">Drop your PPTX file here</h2>
-      <p class="text-gray-600 text-lg">or click to select file</p>
+    <div class="upload-content cursor-pointer" @click="fileInput?.click()">
+      <div class="upload-icon text-5xl mb-2">📊</div>
+      <h2 class="text-xl font-semibold mb-1">Drop your PPTX file here</h2>
+      <p class="text-gray-500 text-sm">or click to select file</p>
     </div>
   </section>
 </template>
