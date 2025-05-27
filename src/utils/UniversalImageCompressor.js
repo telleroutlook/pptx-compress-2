@@ -4,8 +4,8 @@ class UniversalImageCompressor {
             format: 'webp',
             quality: 0.7,
             maxWidth: 1600,
-            maxHeight: 1200,
-            scale: 0.9,
+            maxHeight: 900,
+            scale: 1,
             mode: 'maximum',
             ...options
         };

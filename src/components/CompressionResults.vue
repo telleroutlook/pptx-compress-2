@@ -13,7 +13,7 @@
           <span class="block text-4xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-3">
             {{ formatFileSize(results.stats.compressedSize) }}
           </span>
-          <span class="text-gray-600 text-lg">Compressed Size</span>
+          <span class="text-gray-600 text-lg">Final Size</span>
         </div>
         <div class="bg-gradient-to-br from-primary-light/10 to-secondary/10 rounded-xl p-8 text-center transform transition-all duration-300 hover:scale-105 hover:shadow-md">
           <span class="block text-4xl font-bold text-green-600 mb-3">
@@ -110,6 +110,6 @@ function formatFileSize(bytes) {
   const k = 1024;
   const sizes = ['Bytes', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 }
 </script>

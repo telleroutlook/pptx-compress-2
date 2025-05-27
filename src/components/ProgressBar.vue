@@ -12,7 +12,7 @@
           class="h-full bg-gradient-to-r from-primary to-secondary rounded-full transition-all duration-300 ease-out"
           :style="{ width: `${progressPercentage}%` }"
         >
-          <div class="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/20 to-transparent"></div>
+          <div class="h-full w-full animate-shimmer bg-gradient-to-r from-transparent via-white/40 to-transparent"></div>
         </div>
       </div>
     </div>
@@ -47,6 +47,6 @@ const statusColor = computed(() => {
 }
 
 .animate-shimmer {
-  animation: shimmer 2s infinite;
+  animation: shimmer 1.5s infinite;
 }
 </style>

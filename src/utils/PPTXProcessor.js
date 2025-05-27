@@ -62,8 +62,8 @@ class PPTXProcessor {
     }
 
     getCompressionStats() {
-        const originalSize = this.mediaFiles.reduce((sum, media) => sum + media.file.size, 0);
-        const compressedSize = this.compressedMediaFiles.reduce((sum, media) => 
+        const mediaOriginalSize = this.mediaFiles.reduce((sum, media) => sum + media.file.size, 0);
+        const mediaCompressedSize = this.compressedMediaFiles.reduce((sum, media) => 
             sum + (media.compressedBlob ? media.compressedBlob.size : media.file.size), 0);
         
         const totalCompressionRatio = this.originalPptxSize > 0 ? 
@@ -71,10 +71,12 @@ class PPTXProcessor {
         
         return {
             totalFiles: this.mediaFiles.length,
-            originalSize: originalSize,
-            compressedSize: compressedSize,
-            savedSize: originalSize - compressedSize,
-            compressionRatio: totalCompressionRatio
+            originalSize: this.originalPptxSize,
+            compressedSize: this.compressedPptxSize,
+            savedSize: this.originalPptxSize - this.compressedPptxSize,
+            compressionRatio: totalCompressionRatio,
+            mediaOriginalSize: mediaOriginalSize,
+            mediaCompressedSize: mediaCompressedSize
         };
     }
 
