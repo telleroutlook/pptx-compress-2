@@ -19,7 +19,7 @@ class PPTXCompressor {
         try {
             if (progressCallback) {
                 progressCallback({
-                    progress: 0.1,
+                    progress: 0.05,
                     fileName: 'Extracting media files',
                     status: 'Extracting...'
                 });
@@ -33,7 +33,7 @@ class PPTXCompressor {
 
             if (progressCallback) {
                 progressCallback({
-                    progress: 0.2,
+                    progress: 0.1,
                     fileName: 'Starting compression',
                     status: 'Preparing...'
                 });
@@ -48,7 +48,7 @@ class PPTXCompressor {
                         const currentFile = progress.currentFile || 0;
                         const totalFiles = progress.totalFiles || imageFiles.length;
                         const fileName = progress.fileName || `Image ${currentFile} of ${totalFiles}`;
-                        const stageProgress = 0.2 + (progress.progress * 0.6);
+                        const stageProgress = 0.1 + (progress.progress * 0.7);
                         
                         progressCallback({
                             progress: stageProgress,

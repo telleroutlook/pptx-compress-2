@@ -1,9 +1,13 @@
-import * as JSZip from 'jszip';
+import JSZip from 'jszip';
 import type { Settings, CompressedResult } from '../types';
 
 export function useAudioCompressor() {
   const isBrowser = typeof window !== 'undefined';
   console.log('useAudioCompressor initialized, isBrowser:', isBrowser);
+
+  // 创建一个自定义事件发射器
+  const eventTarget = new EventTarget();
+  const CLEAR_EVENT = 'clear-results';
 
   const compressAudio = async (
     file: File, 
@@ -30,6 +34,7 @@ export function useAudioCompressor() {
           const workerUrl = new URL('../workers/audioCompressionWorker.js', import.meta.url);
           worker = new Worker(workerUrl);
           console.log('Worker initialized successfully');
+          onProgress(5);
         } catch (err) {
           console.error('Failed to initialize worker:', err);
           reject(new Error('Failed to initialize audio compression worker'));
@@ -42,8 +47,9 @@ export function useAudioCompressor() {
           
           switch (data.type) {
             case 'progress':
-              console.log('Progress update:', data.progress + '%');
-              onProgress(data.progress);
+              const smoothProgress = 10 + (data.progress * 0.8);
+              console.log('Progress update:', smoothProgress.toFixed(1) + '%');
+              onProgress(smoothProgress);
               break;
               
             case 'complete':
@@ -129,29 +135,51 @@ export function useAudioCompressor() {
       throw new Error('Download is only available in browser environment');
     }
 
-    const zip = new JSZip();
-    
-    results.forEach(result => {
-      zip.file(
-        `${result.name.split('.')[0]}_compressed.mp3`,
-        result.blob
-      );
-    });
-    
-    const content = await zip.generateAsync({ type: 'blob' });
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = 'compressed_audio.zip';
-    link.click();
-    
-    setTimeout(() => URL.revokeObjectURL(link.href), 100);
+    try {
+      const zip = new JSZip();
+      
+      // 添加所有压缩后的文件到 zip
+      for (const result of results) {
+        const fileName = `${result.name.split('.')[0]}_compressed.${result.outputFormat}`;
+        zip.file(fileName, result.blob);
+      }
+      
+      // 生成 zip 文件
+      const content = await zip.generateAsync({ 
+        type: 'blob',
+        compression: 'DEFLATE',
+        compressionOptions: {
+          level: 9
+        }
+      });
+      
+      // 创建下载链接
+      const link = document.createElement('a');
+      link.href = URL.createObjectURL(content);
+      link.download = 'compressed_audio_files.zip';
+      
+      // 触发下载
+      document.body.appendChild(link);
+      link.click();
+      
+      // 清理
+      document.body.removeChild(link);
+      setTimeout(() => URL.revokeObjectURL(link.href), 100);
+    } catch (error: unknown) {
+      console.error('Failed to create zip file:', error);
+      throw new Error('Failed to create zip file: ' + (error instanceof Error ? error.message : String(error)));
+    }
   };
 
-  const clearAll = () => {};
+  const clearAll = () => {
+    eventTarget.dispatchEvent(new Event(CLEAR_EVENT));
+  };
 
   return {
     compressAudio,
     downloadAll,
-    clearAll
+    clearAll,
+    eventTarget,
+    CLEAR_EVENT
   };
 } 
