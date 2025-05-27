@@ -120,36 +120,23 @@ const settings = ref<Settings>({
 const { compressAudio, downloadAll, eventTarget, CLEAR_EVENT } = useAudioCompressor()
 
 const handleFileUpload = async (event: Event) => {
-  console.log('handleFileUpload triggered')
   const input = event.target as HTMLInputElement
   if (input.files) {
-    console.log('Selected files:', input.files)
     compressedResults.value = [];
     files.value = [...files.value, ...Array.from(input.files)]
-    console.log('Current files array:', files.value)
-    console.log('Files length:', files.value.length)
-    console.log('Should show controls panel:', files.value.length > 0)
     await nextTick()
-    console.log('After nextTick, checking DOM elements...')
     const controlsPanel = document.querySelector('.controls-panel')
-    console.log('Controls panel element:', controlsPanel)
     if (controlsPanel) {
       controlsPanel.scrollIntoView({ 
         behavior: 'smooth', 
         block: 'start' 
       })
     }
-  } else {
-    console.log('No files selected')
   }
 }
 
 const removeFile = (index: number) => {
-  console.log('Removing file at index:', index);
-  console.log('Before removal, files:', files.value);
   files.value.splice(index, 1)
-  console.log('After removal, files:', files.value);
-  console.log('Files length after removal:', files.value.length);
 }
 
 const formatSize = (bytes: number): string => {
@@ -164,10 +151,9 @@ const compressFiles = async () => {
   if (files.value.length === 0) return
   
   isProcessing.value = true
-  progress.value = 5 // 初始进度5%
-  compressedResults.value = [] // 只在开始新的压缩任务时清空结果
+  progress.value = 5
+  compressedResults.value = []
   
-  // 滚动到进度条
   await nextTick()
   document.querySelector('.progress-bar-section')?.scrollIntoView({ 
     behavior: 'smooth', 
@@ -175,10 +161,9 @@ const compressFiles = async () => {
   })
   
   try {
-    // 计算总文件大小
     const totalSize = files.value.reduce((sum, file) => sum + file.size, 0);
     let processedSize = 0;
-    const results = []; // 临时存储所有压缩结果
+    const results = [];
     
     for (let i = 0; i < files.value.length; i++) {
       const file = files.value[i];
@@ -191,24 +176,19 @@ const compressFiles = async () => {
       })
       
       processedSize += file.size;
-      results.push(result); // 将结果添加到临时数组
+      results.push(result);
     }
     
-    // 所有文件压缩完成后，一次性更新结果
     compressedResults.value = results;
-    
-    // 设置最终进度为100%
     progress.value = 100;
     currentFileName.value = 'Processing complete';
     
-    // 压缩完成后滚动到结果部分
     await nextTick()
     document.querySelector('.result-item')?.scrollIntoView({ 
       behavior: 'smooth', 
       block: 'start' 
     })
   } catch (error) {
-    console.error('Compression failed:', error)
     alert('Failed to compress files. Please try again.')
   } finally {
     isProcessing.value = false
@@ -219,13 +199,9 @@ const compressFiles = async () => {
 const isDragOver = ref(false)
 const fileInput = ref<HTMLInputElement | null>(null)
 const onDrop = (e: DragEvent) => {
-  console.log('onDrop triggered');
   isDragOver.value = false
   if (e.dataTransfer?.files) {
-    console.log('Dropped files:', e.dataTransfer.files);
     handleFileUpload({ target: { files: e.dataTransfer.files } } as unknown as Event)
-  } else {
-    console.log('No files in drop event');
   }
 }
 
@@ -244,7 +220,6 @@ const handleDownloadAll = async () => {
     isDownloading.value = true;
     await downloadAll(compressedResults.value);
   } catch (error) {
-    console.error('Failed to download files:', error);
     alert('Failed to download files. Please try again.');
   } finally {
     isDownloading.value = false;
@@ -252,28 +227,18 @@ const handleDownloadAll = async () => {
 };
 
 watch(settings, (newValue) => {
-  console.log('Settings changed in AudioCompress:', JSON.stringify(newValue, null, 2));
 }, { deep: true });
 
 onMounted(() => {
-  console.log('AudioCompress mounted');
-  console.log('Initial settings:', JSON.stringify(settings.value, null, 2));
-  
-  // 监听清空事件
   eventTarget.addEventListener(CLEAR_EVENT, () => {
-    console.log('Clear event received, clearing results');
     compressedResults.value = [];
   });
 });
 
 watch(files, (newFiles) => {
-  console.log('Files array changed:', newFiles);
-  console.log('New files length:', newFiles.length);
 }, { deep: true });
 
-// 添加一个计算属性来跟踪控制面板的显示状态
 const showControlsPanel = computed(() => {
-  console.log('Computing showControlsPanel, files length:', files.value.length)
   return files.value.length > 0
 })
 </script>
@@ -287,7 +252,6 @@ const showControlsPanel = computed(() => {
   animation: shimmer 1.5s infinite;
 }
 
-/* 确保控制面板可见的样式 */
 .controls-panel {
   position: relative;
   z-index: 1000;

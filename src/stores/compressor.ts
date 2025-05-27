@@ -38,7 +38,6 @@ export const useCompressorStore = defineStore('compressor', () => {
 
       results.value = result;
     } catch (error) {
-      console.error('Compression failed:', error);
       throw error;
     } finally {
       isProcessing.value = false;

@@ -90,7 +90,7 @@ async function processFile(file) {
   try {
     await store.processFile(file);
   } catch (error) {
-    console.error('FileUpload: Failed to process file:', error);
+    alert('Failed to process file. Please try again.');
   }
 }
 </script>

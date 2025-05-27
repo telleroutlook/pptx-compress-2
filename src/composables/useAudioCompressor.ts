@@ -3,9 +3,6 @@ import type { Settings, CompressedResult } from '../types';
 
 export function useAudioCompressor() {
   const isBrowser = typeof window !== 'undefined';
-  console.log('useAudioCompressor initialized, isBrowser:', isBrowser);
-
-  // 创建一个自定义事件发射器
   const eventTarget = new EventTarget();
   const CLEAR_EVENT = 'clear-results';
 
@@ -14,46 +11,34 @@ export function useAudioCompressor() {
     settings: Settings,
     onProgress: (progress: number) => void
   ): Promise<CompressedResult> => {
-    console.group('Audio Compression');
-    console.log('Starting compression for file:', file.name);
-    console.log('Settings:', settings);
-
     if (!isBrowser) {
-      console.error('Audio compression attempted in non-browser environment');
       throw new Error('Audio compression is only available in browser environment');
     }
 
     return new Promise(async (resolve, reject) => {
       try {
         onProgress(0);
-        console.log('Initial progress set to 0%');
         
         let worker: Worker;
         try {
-          console.log('Initializing audio compression worker');
           const workerUrl = new URL('../workers/audioCompressionWorker.js', import.meta.url);
           worker = new Worker(workerUrl);
-          console.log('Worker initialized successfully');
           onProgress(5);
         } catch (err) {
-          console.error('Failed to initialize worker:', err);
           reject(new Error('Failed to initialize audio compression worker'));
           return;
         }
         
         worker.onmessage = (e) => {
           const data = e.data;
-          console.log('Worker message received:', data.type);
           
           switch (data.type) {
             case 'progress':
               const smoothProgress = 10 + (data.progress * 0.8);
-              console.log('Progress update:', smoothProgress.toFixed(1) + '%');
               onProgress(smoothProgress);
               break;
               
             case 'complete':
-              console.log('Compression complete, finalizing result');
               onProgress(100);
               resolve({
                 name: file.name,
@@ -71,43 +56,27 @@ export function useAudioCompressor() {
               break;
               
             case 'error':
-              console.error('Worker reported error:', data.error);
               reject(new Error(data.error));
               worker.terminate();
-              break;
-              
-            default:
-              console.warn('Unknown message type from worker:', data);
               break;
           }
         };
         
         worker.onerror = (error) => {
-          console.error('Worker error occurred:', error);
           reject(new Error(`Worker error: ${error.message}`));
           worker.terminate();
         };
         
-        console.log('Initializing AudioContext');
         const audioContext = new AudioContext();
-        console.log('Reading file as ArrayBuffer');
         const arrayBuffer = await file.arrayBuffer();
-        console.log('Decoding audio data');
         const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
         
         onProgress(25);
-        console.log('Audio data decoded, progress at 25%');
         
         const leftChannel = audioBuffer.getChannelData(0);
         const rightChannel = audioBuffer.numberOfChannels > 1 ? 
           audioBuffer.getChannelData(1) : 
           leftChannel;
-        
-        console.log('Audio channels processed:', {
-          numberOfChannels: audioBuffer.numberOfChannels,
-          sampleRate: audioBuffer.sampleRate,
-          duration: audioBuffer.duration
-        });
         
         worker.postMessage({
           leftChannel,
@@ -120,55 +89,26 @@ export function useAudioCompressor() {
             duration: audioBuffer.duration
           }
         });
-        
-        console.groupEnd();
       } catch (error) {
-        console.error('Compression process failed:', error);
-        console.groupEnd();
         reject(error);
       }
     });
   };
-  
-  const downloadAll = async (results: CompressedResult[]) => {
-    if (!isBrowser) {
-      throw new Error('Download is only available in browser environment');
-    }
 
-    try {
-      const zip = new JSZip();
-      
-      // 添加所有压缩后的文件到 zip
-      for (const result of results) {
-        const fileName = `${result.name.split('.')[0]}_compressed.${result.outputFormat}`;
-        zip.file(fileName, result.blob);
-      }
-      
-      // 生成 zip 文件
-      const content = await zip.generateAsync({ 
-        type: 'blob',
-        compression: 'DEFLATE',
-        compressionOptions: {
-          level: 9
-        }
-      });
-      
-      // 创建下载链接
-      const link = document.createElement('a');
-      link.href = URL.createObjectURL(content);
-      link.download = 'compressed_audio_files.zip';
-      
-      // 触发下载
-      document.body.appendChild(link);
-      link.click();
-      
-      // 清理
-      document.body.removeChild(link);
-      setTimeout(() => URL.revokeObjectURL(link.href), 100);
-    } catch (error: unknown) {
-      console.error('Failed to create zip file:', error);
-      throw new Error('Failed to create zip file: ' + (error instanceof Error ? error.message : String(error)));
-    }
+  const downloadAll = async (results: CompressedResult[]) => {
+    const zip = new JSZip();
+    
+    results.forEach(result => {
+      zip.file(`${result.name.split('.')[0]}_compressed.${result.outputFormat}`, result.blob);
+    });
+    
+    const blob = await zip.generateAsync({ type: 'blob' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'compressed_audio_files.zip';
+    link.click();
+    URL.revokeObjectURL(url);
   };
 
   const clearAll = () => {

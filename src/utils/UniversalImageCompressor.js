@@ -1,32 +1,15 @@
 class UniversalImageCompressor {
     constructor(options = {}) {
         this.options = {
-            format: 'webp',
-            quality: 0.7,
-            maxWidth: 1600,
-            maxHeight: 900,
+            maxWidth: 1920,
+            maxHeight: 1080,
+            quality: 0.8,
+            format: 'jpeg',
             scale: 1,
-            mode: 'maximum',
+            mode: 'balanced',
             ...options
         };
-        
-        this.supportedFormats = [
-            // Common formats
-            'jpg', 'jpeg', 'png', 'gif', 'webp', 'bmp',
-            // Other browser supported formats
-            'ico', 'apng',
-            // Professional formats
-            'heic', 'heif', 'avif',
-            // Additional formats
-            'jfif', 'wmf'
-        ];
-        
         this.worker = this.createCompressionWorker();
-    }
-
-    isFormatSupported(fileName) {
-        const extension = fileName.split('.').pop().toLowerCase();
-        return this.supportedFormats.includes(extension);
     }
 
     createCompressionWorker() {
@@ -118,11 +101,15 @@ class UniversalImageCompressor {
                     self.postMessage({ error: error.message });
                 }
             };
-        `], { type: 'text/javascript' })));
+        `])));
+    }
+
+    isFormatSupported(filename) {
+        const ext = filename.split('.').pop().toLowerCase();
+        return ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
     }
 
     async compressImage(file, settings = {}) {
-        // Check if file format is supported
         if (!this.isFormatSupported(file.name)) {
             return {
                 name: file.name,
@@ -131,8 +118,6 @@ class UniversalImageCompressor {
                 originalSize: file.size,
                 width: 0,
                 height: 0,
-                hasTransparency: false,
-                outputFormat: file.name.split('.').pop().toLowerCase(),
                 compressionRatio: 0,
                 skipped: true
             };
@@ -207,7 +192,9 @@ class UniversalImageCompressor {
                 if (progressCallback) {
                     progressCallback({
                         progress: i / totalFiles,
-                        fileName: file.name || `image_${i + 1}`,
+                        currentFile: i + 1,
+                        totalFiles: totalFiles,
+                        fileName: file.name,
                         status: 'Processing...'
                     });
                 }
@@ -215,12 +202,7 @@ class UniversalImageCompressor {
                 const result = await this.compressImage(file, settings);
                 results.push(result);
 
-                if (result.skipped) {
-                    // Skip logging for unsupported formats
-                }
-
             } catch (error) {
-                console.error(`Failed to compress ${file.name}:`, error);
                 results.push({
                     name: file.name || `image_${i + 1}`,
                     error: error.message,
@@ -239,10 +221,6 @@ class UniversalImageCompressor {
         }
 
         return results;
-    }
-
-    updateOptions(newOptions) {
-        this.options = { ...this.options, ...newOptions };
     }
 
     destroy() {

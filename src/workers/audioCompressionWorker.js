@@ -55,37 +55,27 @@ self.onmessage = async function(e) {
     
     const totalBlocks = Math.ceil(leftInt16.length / sampleBlockSize);
     let processedBlocks = 0;
-
-    if (channels === 1) {
-      for (let i = 0; i < leftInt16.length; i += sampleBlockSize) {
-        const chunk = leftInt16.slice(i, i + sampleBlockSize);
-        const mp3buf = mp3encoder.encodeBuffer(chunk);
-        if (mp3buf.length > 0) {
-          mp3Data.push(mp3buf);
-        }
-        processedBlocks++;
-        if (processedBlocks % 10 === 0) {
-          const blockProgress = processedBlocks / totalBlocks;
-          const currentProgress = 25 + (blockProgress * 70);
-          self.postMessage({ type: 'progress', progress: Math.min(currentProgress, 95) });
-          await new Promise(res => setTimeout(res, 0));
-        }
+    
+    for (let i = 0; i < leftInt16.length; i += sampleBlockSize) {
+      const leftChunk = leftInt16.slice(i, i + sampleBlockSize);
+      const rightChunk = channels > 1 ? rightInt16.slice(i, i + sampleBlockSize) : leftChunk;
+      
+      const mp3buf = channels > 1 ?
+        mp3encoder.encodeBuffer(leftChunk, rightChunk) :
+        mp3encoder.encodeBuffer(leftChunk);
+      
+      if (mp3buf.length > 0) {
+        mp3Data.push(mp3buf);
       }
-    } else {
-      for (let i = 0; i < leftInt16.length; i += sampleBlockSize) {
-        const leftChunk = leftInt16.slice(i, i + sampleBlockSize);
-        const rightChunk = rightInt16.slice(i, i + sampleBlockSize);
-        const mp3buf = mp3encoder.encodeBuffer(leftChunk, rightChunk);
-        if (mp3buf.length > 0) {
-          mp3Data.push(mp3buf);
-        }
-        processedBlocks++;
-        if (processedBlocks % 10 === 0) {
-          const blockProgress = processedBlocks / totalBlocks;
-          const currentProgress = 25 + (blockProgress * 70);
-          self.postMessage({ type: 'progress', progress: Math.min(currentProgress, 95) });
-          await new Promise(res => setTimeout(res, 0));
-        }
+      
+      processedBlocks++;
+      const progress = (processedBlocks / totalBlocks) * 100;
+      
+      if (processedBlocks % 10 === 0) {
+        self.postMessage({
+          type: 'progress',
+          progress: progress
+        });
       }
     }
     
@@ -94,19 +84,16 @@ self.onmessage = async function(e) {
       mp3Data.push(end);
     }
     
-    self.postMessage({ type: 'progress', progress: 100 });
-
-    const resultBlob = new Blob(mp3Data, { type: 'audio/mp3' });
+    const blob = new Blob(mp3Data, { type: 'audio/mp3' });
     
     self.postMessage({
       type: 'complete',
       result: {
-        blob: resultBlob,
+        blob: blob,
         duration: settings.duration,
-        sampleRate: sampleRate,
+        sampleRate: settings.sampleRate,
         channels: channels,
-        originalSize: settings.originalSize,
-        outputFormat: settings.format
+        outputFormat: 'mp3'
       }
     });
   } catch (error) {
