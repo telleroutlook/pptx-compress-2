@@ -40,10 +40,6 @@
   </div>
 </template>
 
-<script setup lang="ts">
-// Component logic here
-</script>
-
 <style scoped>
 .router-link-active {
   color: var(--color-primary);

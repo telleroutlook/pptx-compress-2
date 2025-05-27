@@ -4,20 +4,77 @@
       <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Audio Compressor</h1>
       <p class="subtitle">Compress your audio files while maintaining quality</p>
     </header>
-    <section class="upload-area mb-8" :class="{ dragover: isDragOver }" @dragover.prevent="isDragOver = true" @dragleave.prevent="isDragOver = false" @drop.prevent="onDrop">
-      <input ref="fileInput" type="file" accept="audio/*" multiple class="hidden" @change="handleFileUpload" />
-      <div class="upload-content cursor-pointer" @click="fileInput?.click()">
-        <div class="upload-icon text-5xl mb-2">🎵</div>
-        <h2 class="text-xl font-semibold mb-1">Drop your audio files here</h2>
-        <p class="text-gray-500 text-sm">or click to select files</p>
+    <section 
+      class="upload-area mb-8" 
+      :class="{ 
+        'dragover': isDragOver,
+        'processing': isProcessing,
+        'has-files': files.length > 0 
+      }" 
+      @dragover.prevent="isDragOver = true" 
+      @dragleave.prevent="isDragOver = false" 
+      @drop.prevent="onDrop"
+    >
+      <input 
+        ref="fileInput" 
+        type="file" 
+        accept="audio/*" 
+        multiple 
+        class="hidden" 
+        @change="handleFileUpload"
+        :disabled="isProcessing"
+      />
+      <div class="upload-content cursor-pointer" @click="!isProcessing && fileInput?.click()">
+        <div class="upload-icon text-5xl mb-2">
+          <span v-if="isProcessing">⏳</span>
+          <span v-else-if="files.length > 0">📁</span>
+          <span v-else>🎵</span>
+        </div>
+        <h2 class="text-xl font-semibold mb-1">
+          <span v-if="isProcessing">Processing files...</span>
+          <span v-else-if="files.length > 0">{{ files.length }} file(s) selected</span>
+          <span v-else>Drop your audio files here</span>
+        </h2>
+        <p class="text-gray-500 text-sm">
+          <span v-if="isProcessing">Please wait while we process your files</span>
+          <span v-else-if="files.length > 0">Click to add more files</span>
+          <span v-else>or click to select files</span>
+        </p>
       </div>
     </section>
     <div v-if="files.length > 0" class="bg-white rounded-lg p-4 shadow-sm mb-4">
-      <h3 class="text-lg font-semibold mb-3">Selected Files</h3>
-      <div class="space-y-2">
-        <div v-for="(file, index) in files" :key="index" class="flex items-center justify-between p-3 bg-gray-50 rounded">
-          <span class="text-sm text-gray-600">{{ file.name }}</span>
-          <button @click="removeFile(index)" class="text-red-500 hover:text-red-700">Remove</button>
+      <div class="flex justify-between items-center mb-3">
+        <h3 class="text-lg font-semibold">Selected Files</h3>
+        <button 
+          v-if="!isProcessing"
+          @click="files = []" 
+          class="text-sm text-red-500 hover:text-red-700 flex items-center"
+        >
+          <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+          Clear All
+        </button>
+      </div>
+      <div class="space-y-2 max-h-60 overflow-y-auto">
+        <div 
+          v-for="(file, index) in files" 
+          :key="index" 
+          class="flex items-center justify-between p-3 bg-gray-50 rounded hover:bg-gray-100 transition-colors duration-200"
+        >
+          <div class="flex items-center space-x-3">
+            <span class="text-sm text-gray-600 truncate max-w-[300px]">{{ file.name }}</span>
+            <span class="text-xs text-gray-500">{{ formatSize(file.size) }}</span>
+          </div>
+          <button 
+            v-if="!isProcessing"
+            @click="removeFile(index)" 
+            class="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors duration-200"
+          >
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
         </div>
       </div>
     </div>
@@ -26,6 +83,7 @@
       :model-value="settings"
       @update:model-value="settings = $event"
       @compress="compressFiles"
+      :disabled="isProcessing"
     />
     <div v-if="isProcessing" class="progress-bar-section bg-white rounded-xl p-8 mb-8 shadow-lg transform transition-all duration-300">
       <div class="mb-6">
@@ -64,13 +122,23 @@
         </button>
       </div>
       <div class="space-y-4">
-        <div v-for="(result, index) in compressedResults" :key="index" class="result-item bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200">
+        <div 
+          v-for="(result, index) in compressedResults" 
+          :key="index" 
+          class="result-item bg-white rounded-lg p-4 shadow-sm border border-gray-100 hover:shadow-md transition-all duration-200"
+        >
           <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0">
               <div class="flex items-center space-x-3">
                 <span class="text-sm font-medium text-gray-900 truncate">{{ result.name }}</span>
-                <span class="px-2 py-1 text-xs font-semibold text-green-600 bg-green-50 rounded-full">
-                  {{ result.compressionRatio }}% smaller
+                <span 
+                  class="px-2 py-1 text-xs font-semibold rounded-full"
+                  :class="{
+                    'text-green-600 bg-green-50': Number(result.compressionRatio) > 0,
+                    'text-yellow-600 bg-yellow-50': Number(result.compressionRatio) === 0
+                  }"
+                >
+                  {{ Number(result.compressionRatio) > 0 ? `${result.compressionRatio}% smaller` : 'No compression' }}
                 </span>
               </div>
               <div class="mt-1 flex items-center text-sm text-gray-500 space-x-4">
@@ -101,13 +169,21 @@ import { useAudioCompressor } from '../composables/useAudioCompressor'
 import type { Settings, CompressedResult } from '../types'
 import ControlsPanel from '../components/ControlsPanel.vue'
 
+// 状态管理
 const files = ref<File[]>([])
 const isProcessing = ref(false)
 const progress = ref(0)
 const compressedResults = ref<CompressedResult[]>([])
 const isDownloading = ref(false)
 const currentFileName = ref('')
+const isDragOver = ref(false)
+const fileInput = ref<HTMLInputElement | null>(null)
 
+// 计算属性
+const showControlsPanel = computed(() => files.value.length > 0)
+const totalFilesSize = computed(() => files.value.reduce((sum, file) => sum + file.size, 0))
+
+// 默认设置
 const settings = ref<Settings>({
   format: 'mp3',
   quality: 0.8,
@@ -119,26 +195,7 @@ const settings = ref<Settings>({
 
 const { compressAudio, downloadAll, eventTarget, CLEAR_EVENT } = useAudioCompressor()
 
-const handleFileUpload = async (event: Event) => {
-  const input = event.target as HTMLInputElement
-  if (input.files) {
-    compressedResults.value = [];
-    files.value = [...files.value, ...Array.from(input.files)]
-    await nextTick()
-    const controlsPanel = document.querySelector('.controls-panel')
-    if (controlsPanel) {
-      controlsPanel.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'start' 
-      })
-    }
-  }
-}
-
-const removeFile = (index: number) => {
-  files.value.splice(index, 1)
-}
-
+// 工具函数
 const formatSize = (bytes: number): string => {
   if (bytes === 0) return '0 Bytes'
   const k = 1024
@@ -147,6 +204,37 @@ const formatSize = (bytes: number): string => {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i]
 }
 
+const scrollToElement = async (selector: string) => {
+  await nextTick()
+  const element = document.querySelector(selector)
+  if (element) {
+    element.scrollIntoView({ 
+      behavior: 'smooth', 
+      block: 'start' 
+    })
+  }
+}
+
+// 文件处理函数
+const handleFileUpload = async (event: Event) => {
+  const input = event.target as HTMLInputElement
+  if (!input.files?.length) return
+
+  try {
+    compressedResults.value = []
+    files.value = [...files.value, ...Array.from(input.files)]
+    await scrollToElement('.controls-panel')
+  } catch (error) {
+    console.error('Error handling file upload:', error)
+    alert('Failed to process files. Please try again.')
+  }
+}
+
+const removeFile = (index: number) => {
+  files.value.splice(index, 1)
+}
+
+// 压缩处理函数
 const compressFiles = async () => {
   if (files.value.length === 0) return
   
@@ -154,50 +242,41 @@ const compressFiles = async () => {
   progress.value = 5
   compressedResults.value = []
   
-  await nextTick()
-  document.querySelector('.progress-bar-section')?.scrollIntoView({ 
-    behavior: 'smooth', 
-    block: 'start' 
-  })
+  await scrollToElement('.progress-bar-section')
   
   try {
-    const totalSize = files.value.reduce((sum, file) => sum + file.size, 0);
-    let processedSize = 0;
-    const results = [];
+    const totalSize = totalFilesSize.value
+    let processedSize = 0
+    const results: CompressedResult[] = []
     
-    for (let i = 0; i < files.value.length; i++) {
-      const file = files.value[i];
-      currentFileName.value = file.name;
-      const fileProgress = (processedSize / totalSize) * 90;
+    for (const file of files.value) {
+      currentFileName.value = file.name
+      const fileProgress = (processedSize / totalSize) * 90
       
       const result = await compressAudio(file, settings.value, (p) => {
-        const currentFileProgress = (file.size / totalSize) * 90 * (p / 100);
-        progress.value = 5 + fileProgress + currentFileProgress;
+        const currentFileProgress = (file.size / totalSize) * 90 * (p / 100)
+        progress.value = 5 + fileProgress + currentFileProgress
       })
       
-      processedSize += file.size;
-      results.push(result);
+      processedSize += file.size
+      results.push(result)
     }
     
-    compressedResults.value = results;
-    progress.value = 100;
-    currentFileName.value = 'Processing complete';
+    compressedResults.value = results
+    progress.value = 100
+    currentFileName.value = 'Processing complete'
     
-    await nextTick()
-    document.querySelector('.result-item')?.scrollIntoView({ 
-      behavior: 'smooth', 
-      block: 'start' 
-    })
+    await scrollToElement('.result-item')
   } catch (error) {
+    console.error('Error compressing files:', error)
     alert('Failed to compress files. Please try again.')
   } finally {
     isProcessing.value = false
-    currentFileName.value = '';
+    currentFileName.value = ''
   }
 }
 
-const isDragOver = ref(false)
-const fileInput = ref<HTMLInputElement | null>(null)
+// 拖放处理
 const onDrop = (e: DragEvent) => {
   isDragOver.value = false
   if (e.dataTransfer?.files) {
@@ -205,42 +284,49 @@ const onDrop = (e: DragEvent) => {
   }
 }
 
+// 下载处理
 const downloadSingleFile = (result: CompressedResult) => {
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(result.blob);
-  link.download = `${result.name.split('.')[0]}_compressed.${result.outputFormat}`;
-  link.click();
-  setTimeout(() => URL.revokeObjectURL(link.href), 100);
-};
+  try {
+    const link = document.createElement('a')
+    link.href = URL.createObjectURL(result.blob)
+    link.download = `${result.name.split('.')[0]}_compressed.${result.outputFormat}`
+    link.click()
+    setTimeout(() => URL.revokeObjectURL(link.href), 100)
+  } catch (error) {
+    console.error('Error downloading file:', error)
+    alert('Failed to download file. Please try again.')
+  }
+}
 
 const handleDownloadAll = async () => {
-  if (isDownloading.value) return;
+  if (isDownloading.value) return
   
   try {
-    isDownloading.value = true;
-    await downloadAll(compressedResults.value);
+    isDownloading.value = true
+    await downloadAll(compressedResults.value)
   } catch (error) {
-    alert('Failed to download files. Please try again.');
+    console.error('Error downloading all files:', error)
+    alert('Failed to download files. Please try again.')
   } finally {
-    isDownloading.value = false;
+    isDownloading.value = false
   }
-};
+}
 
-watch(settings, (newValue) => {
-}, { deep: true });
-
+// 生命周期钩子
 onMounted(() => {
   eventTarget.addEventListener(CLEAR_EVENT, () => {
-    compressedResults.value = [];
-  });
-});
-
-watch(files, (newFiles) => {
-}, { deep: true });
-
-const showControlsPanel = computed(() => {
-  return files.value.length > 0
+    compressedResults.value = []
+  })
 })
+
+// 监听器
+watch(settings, () => {
+  // 可以在这里添加设置变更时的处理逻辑
+}, { deep: true })
+
+watch(files, () => {
+  // 可以在这里添加文件列表变更时的处理逻辑
+}, { deep: true })
 </script>
 
 <style>
@@ -248,8 +334,28 @@ const showControlsPanel = computed(() => {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(100%); }
 }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
 .animate-shimmer {
   animation: shimmer 1.5s infinite;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
 }
 
 .controls-panel {
@@ -259,6 +365,7 @@ const showControlsPanel = computed(() => {
   visibility: visible;
   display: block;
   background: white;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .upload-area {
@@ -267,13 +374,25 @@ const showControlsPanel = computed(() => {
   padding: 40px;
   text-align: center;
   background: rgba(102, 126, 234, 0.05);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .upload-area.dragover {
   background: rgba(102, 126, 234, 0.1);
   border-color: #764ba2;
   transform: scale(1.02);
+  animation: pulse 1s infinite;
+}
+
+.upload-area.processing {
+  border-color: #764ba2;
+  background: rgba(102, 126, 234, 0.1);
+  cursor: not-allowed;
+}
+
+.upload-area.has-files {
+  border-color: #764ba2;
+  background: rgba(102, 126, 234, 0.1);
 }
 
 .upload-content {
@@ -281,11 +400,17 @@ const showControlsPanel = computed(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s ease;
 }
 
 .upload-icon {
   color: #667eea;
   margin-bottom: 16px;
+  transition: transform 0.3s ease;
+}
+
+.upload-area:hover .upload-icon {
+  transform: scale(1.1);
 }
 
 .progress-bar-section {
@@ -293,6 +418,7 @@ const showControlsPanel = computed(() => {
   border-radius: 12px;
   padding: 20px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  animation: fadeIn 0.3s ease-out;
 }
 
 .container {
@@ -307,11 +433,60 @@ const showControlsPanel = computed(() => {
   padding: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(102, 126, 234, 0.1);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
+  animation: fadeIn 0.3s ease-out;
 }
 
 .result-item:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 滚动条样式 */
+.space-y-2.max-h-60 {
+  scrollbar-width: thin;
+  scrollbar-color: #667eea #f3f4f6;
+}
+
+.space-y-2.max-h-60::-webkit-scrollbar {
+  width: 6px;
+}
+
+.space-y-2.max-h-60::-webkit-scrollbar-track {
+  background: #f3f4f6;
+  border-radius: 3px;
+}
+
+.space-y-2.max-h-60::-webkit-scrollbar-thumb {
+  background-color: #667eea;
+  border-radius: 3px;
+}
+
+/* 按钮悬停效果 */
+button {
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+/* 禁用状态样式 */
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* 加载动画 */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
 }
 </style>

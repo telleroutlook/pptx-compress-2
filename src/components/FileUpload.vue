@@ -23,15 +23,15 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, watch } from 'vue';
-import JSZip from 'jszip';
 import { useCompressorStore } from '../stores/compressor';
 import { nextTick } from 'vue';
 
 const store = useCompressorStore();
 const isDragging = ref(false);
 const uploadSectionRef = ref(null);
+const fileInput = ref<HTMLInputElement | null>(null);
 
 // Watch for processing state changes
 watch(() => store.isProcessing, async (isProcessing) => {
@@ -59,16 +59,18 @@ watch(() => store.isProcessing, async (isProcessing) => {
   }
 });
 
-function handleDragOver(e) {
+function handleDragOver(_e: DragEvent) {
   isDragging.value = true;
 }
 
-function handleDragLeave(e) {
+function handleDragLeave(_e: DragEvent) {
   isDragging.value = false;
 }
 
-function handleDrop(e) {
+function handleDrop(e: DragEvent) {
   isDragging.value = false;
+  if (!e.dataTransfer?.files) return;
+  
   const files = Array.from(e.dataTransfer.files).filter(file => 
     file.name.toLowerCase().endsWith('.pptx')
   );
@@ -77,8 +79,11 @@ function handleDrop(e) {
   }
 }
 
-function handleFileSelect(e) {
-  const files = Array.from(e.target.files).filter(file => 
+function handleFileSelect(e: Event) {
+  const input = e.target as HTMLInputElement;
+  if (!input.files?.length) return;
+  
+  const files = Array.from(input.files).filter(file => 
     file.name.toLowerCase().endsWith('.pptx')
   );
   if (files.length > 0) {
@@ -86,11 +91,47 @@ function handleFileSelect(e) {
   }
 }
 
-async function processFile(file) {
+async function processFile(file: File) {
   try {
     await store.processFile(file);
   } catch (error) {
+    console.error('Error processing file:', error);
     alert('Failed to process file. Please try again.');
   }
 }
 </script>
+
+<style scoped>
+.upload-area {
+  border: 2px dashed #667eea;
+  border-radius: 12px;
+  padding: 40px;
+  text-align: center;
+  background: rgba(102, 126, 234, 0.05);
+  transition: all 0.3s ease;
+}
+
+.upload-area.dragover {
+  background: rgba(102, 126, 234, 0.1);
+  border-color: #764ba2;
+  transform: scale(1.02);
+}
+
+.upload-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.upload-icon {
+  color: #667eea;
+  margin-bottom: 16px;
+  transition: transform 0.3s ease;
+}
+
+.upload-area:hover .upload-icon {
+  transform: scale(1.1);
+}
+</style>
