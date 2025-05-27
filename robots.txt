@@ -1,7 +1,17 @@
 User-agent: *
 Allow: /
-Sitemap: https://pptx-compress.com/sitemap.xml
+Allow: /sitemap.xml
+Allow: /robots.txt
 
 # Disallow temporary files and uploads
 Disallow: /temp/
-Disallow: /uploads/ 
+Disallow: /uploads/
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+
+# Crawl-delay
+Crawl-delay: 10
+
+# Sitemap
+Sitemap: https://byteslim.com/sitemap.xml 
