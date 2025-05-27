@@ -1,0 +1,9 @@
+---
+description: 
+globs: 
+alwaysApply: false
+---
+本项目使用vue+vite框架。
+请保持代码简洁，代码中不需要任何注释。
+
+代码中的log、用户界面都必须是英文

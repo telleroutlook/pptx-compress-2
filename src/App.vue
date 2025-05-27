@@ -1,28 +1,25 @@
 <template>
-  <div class="container">
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-        Advanced PPTX Compressor
-      </h1>
-      <p class="text-gray-600">Compress your PowerPoint files by optimizing embedded images</p>
-    </header>
-
-    <FeatureInfo />
-    <FileUpload />
-    <ProgressBar v-if="showProgress" />
-    <CompressionResults v-if="showResults" />
+  <div class="min-h-screen bg-gray-100">
+    <nav class="bg-white shadow-lg">
+      <div class="max-w-7xl mx-auto px-4">
+        <div class="flex justify-between h-16">
+          <div class="flex">
+            <router-link to="/" class="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900">
+              PPT Compression
+            </router-link>
+            <router-link to="/audio" class="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900">
+              Audio Compression
+            </router-link>
+          </div>
+        </div>
+      </div>
+    </nav>
+    <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+      <router-view></router-view>
+    </main>
   </div>
 </template>
 
-<script setup>
-import { computed } from 'vue';
-import { useCompressorStore } from './stores/compressor';
-import FeatureInfo from './components/FeatureInfo.vue';
-import FileUpload from './components/FileUpload.vue';
-import ProgressBar from './components/ProgressBar.vue';
-import CompressionResults from './components/CompressionResults.vue';
-
-const store = useCompressorStore();
-const showProgress = computed(() => store.isProcessing);
-const showResults = computed(() => store.hasResults);
+<script setup lang="ts">
+// Component logic here
 </script>

@@ -7,15 +7,23 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: {
-          light: '#667eea',
-          DEFAULT: '#5a67d8',
-          dark: '#4c51bf',
-        },
-        secondary: {
-          light: '#764ba2',
-          DEFAULT: '#6b46c1',
-          dark: '#553c9a',
+        primary: 'var(--primary)',
+        'primary-dark': 'var(--primary-dark)',
+        secondary: 'var(--secondary)',
+      },
+      scale: {
+        '102': '1.02',
+      },
+      borderWidth: {
+        '3': '3px',
+      },
+      animation: {
+        'shimmer': 'shimmer 2s infinite linear',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '-200% 0' },
+          '100%': { backgroundPosition: '200% 0' },
         },
       },
     },
