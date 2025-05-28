@@ -21,7 +21,7 @@
         </p>
       </div>
 
-      <div class="bg-white rounded-lg shadow-md p-6">
+      <div class="bg-white rounded-lg shadow-md p-6 mb-8">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Privacy Policy</h2>
         <p class="text-gray-600 mb-4">
           Your privacy is our top priority. We process all files locally in your browser, ensuring that your data never leaves your device. We do not store or collect any personal information or file content.
@@ -29,6 +29,19 @@
         <p class="text-gray-600">
           Our service is completely free to use, with no hidden fees or subscriptions required. We believe in providing transparent and reliable file compression services to all our users.
         </p>
+      </div>
+
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Contact Us</h2>
+        <p class="text-gray-600 mb-4">
+          Have questions or feedback? We'd love to hear from you. Our team is always ready to help and improve our services based on your needs.
+        </p>
+        <div class="flex items-center space-x-2 text-primary hover:text-primary-dark transition-colors duration-200">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+          </svg>
+          <a href="mailto:support@byteslim.com" class="text-lg">support@byteslim.com</a>
+        </div>
       </div>
     </div>
   </div>
