@@ -74,7 +74,7 @@ ErrorDocument 504 /errors/504.html
     Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
     
     # Content Security Policy with detailed rules
-    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://byteslim.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self';"
+    Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://static.cloudflareinsights.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https://byteslim.com https://static.cloudflareinsights.com; frame-ancestors 'none'; form-action 'self'; base-uri 'self';"
     
     # Feature Policy
     Header always set Permissions-Policy "geolocation=(), microphone=(), camera=(), payment=(), usb=(), interest-cohort=()"
@@ -178,7 +178,7 @@ ErrorDocument 504 /errors/504.html
     </FilesMatch>
     
     # Add CORS headers with detailed options
-    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Origin "https://byteslim.com"
     Header set Access-Control-Allow-Methods "GET, POST, OPTIONS"
     Header set Access-Control-Allow-Headers "Origin, X-Requested-With, Content-Type, Accept, Authorization"
     Header set Access-Control-Expose-Headers "Content-Length, Content-Range"
