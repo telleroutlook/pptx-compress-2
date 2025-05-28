@@ -1,7 +1,7 @@
 {
-  "name": "Advanced PPTX Compressor",
-  "short_name": "PPTX Compressor",
-  "description": "Transform your bulky presentations into sleek, optimized files. Our intelligent PPTX compressor preserves visual quality while dramatically reducing file size. Fast, secure, and completely free.",
+  "name": "Advanced PPTX & Audio Compressor",
+  "short_name": "File Compressor",
+  "description": "Transform your bulky presentations and audio files into optimized formats. Our intelligent compression tools preserve quality while dramatically reducing file size. Fast, secure, and completely free.",
   "icons": [
     {
       "src": "/android-chrome-192x192.png",

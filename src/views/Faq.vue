@@ -30,6 +30,10 @@ const faqs = [
     answer: "Our PPTX compression tool uses advanced algorithms to optimize images, remove redundant data, and compress media files while maintaining the visual quality of your presentation. The process is completely automated and secure."
   },
   {
+    question: "How does the audio compression work?",
+    answer: "Our audio compression tool supports various audio formats and uses advanced algorithms to reduce file size while maintaining sound quality. It optimizes audio streams, removes unnecessary metadata, and applies efficient compression techniques."
+  },
+  {
     question: "Is my data safe?",
     answer: "Yes, your data is completely secure. We process all files locally in your browser, and no files are uploaded to our servers. Your privacy is our top priority."
   },
@@ -39,15 +43,19 @@ const faqs = [
   },
   {
     question: "How much can I reduce my file size?",
-    answer: "The compression ratio varies depending on the content of your files. Typically, you can expect a reduction of 30-70% in file size while maintaining good quality. Images and media files are optimized for web sharing."
+    answer: "The compression ratio varies depending on the content of your files. For PPTX files, you can expect a reduction of 30-70% while maintaining good quality. For audio files, the compression ratio typically ranges from 20-60% depending on the original format and quality settings."
   },
   {
     question: "Is there a file size limit?",
-    answer: "Yes, there is a limit of 100MB per file to ensure optimal performance. For larger files, we recommend splitting them into smaller parts before compression."
+    answer: "Yes, there is a limit of 500MB per file for both PPTX and audio files to ensure optimal performance. For larger files, we recommend splitting them into smaller parts before compression."
   },
   {
     question: "Do I need to install any software?",
     answer: "No installation is required. Our tool runs entirely in your web browser. Just visit our website and start compressing your files immediately."
+  },
+  {
+    question: "Will the compressed audio maintain the same quality?",
+    answer: "Yes, our audio compression algorithm is designed to maintain the best possible sound quality while reducing file size. The compression focuses on optimizing audio streams and removing redundant data without significantly affecting the listening experience."
   }
 ];
 </script>
