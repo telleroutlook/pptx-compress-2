@@ -39,7 +39,12 @@ export const useCompressorStore = defineStore('compressor', () => {
         status.value = progressData.status;
       });
 
-      results.value = result;
+      results.value = {
+        originalSize: result.stats.originalSize,
+        compressedSize: result.stats.compressedSize,
+        fileName: result.compressedFile.name,
+        downloadUrl: URL.createObjectURL(result.compressedFile)
+      };
     } catch (error: unknown) {
       console.error('Compression error:', error);
       status.value = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;

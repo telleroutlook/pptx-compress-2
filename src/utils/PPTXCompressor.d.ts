@@ -1,3 +1,8 @@
+interface CompressionStats {
+  originalSize: number;
+  compressedSize: number;
+}
+
 interface CompressionOptions {
   maxWidth?: number;
   maxHeight?: number;
@@ -7,19 +12,15 @@ interface CompressionOptions {
   mode?: string;
 }
 
-interface CompressionResult {
-  compressedFile: File;
-  stats: {
-    originalSize: number;
-    compressedSize: number;
-    compressionRatio: number;
-  };
-}
-
 interface ProgressData {
   progress: number;
   fileName: string;
   status: string;
+}
+
+interface CompressionResult {
+  compressedFile: File;
+  stats: CompressionStats;
 }
 
 declare class PPTXCompressor {
