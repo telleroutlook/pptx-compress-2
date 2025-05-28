@@ -3,6 +3,12 @@
     <nav class="bg-white shadow-lg">
       <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between h-16">
+          <div class="flex items-center">
+            <router-link to="/" class="flex items-center">
+              <img src="/byteslim_512.png" alt="ByteSlim Logo" class="h-8 w-8 mr-2">
+              <span class="text-xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">ByteSlim.com</span>
+            </router-link>
+          </div>
           <div class="flex space-x-1">
             <router-link 
               to="/" 
