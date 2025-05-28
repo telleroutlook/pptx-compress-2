@@ -1,5 +1,10 @@
 <template>
   <div class="container">
+    <SeoHead
+      title="Audio Compressor - Free Online Audio File Compression"
+      description="Free online audio compressor tool. Reduce audio file size while maintaining quality. Supports MP3, WAV, and M4A formats. Fast, secure, and easy to use."
+      type="WebApplication"
+    />
     <header class="text-center mb-8">
       <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Audio Compressor</h1>
       <p class="subtitle">Compress your audio files while maintaining quality</p>
@@ -168,6 +173,7 @@ import { ref, nextTick, onMounted, watch, computed } from 'vue'
 import { useAudioCompressor } from '../composables/useAudioCompressor'
 import type { Settings, CompressedResult } from '../types'
 import ControlsPanel from '../components/ControlsPanel.vue'
+import SeoHead from '../components/SeoHead.vue'
 
 // 状态管理
 const files = ref<File[]>([])

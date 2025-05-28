@@ -12,6 +12,16 @@ const router = createRouter({
       path: '/audio',
       name: 'audio',
       component: () => import('../views/AudioCompress.vue')
+    },
+    {
+      path: '/faq',
+      name: 'faq',
+      component: () => import('../views/Faq.vue')
+    },
+    {
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/About.vue')
     }
   ]
 })
