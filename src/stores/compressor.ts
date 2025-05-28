@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import PPTXCompressor from '../utils/PPTXCompressor';
+import PPTXCompressor from '../utils/PPTXCompressor.js';
 
 interface ProgressData {
   progress: number;
@@ -29,6 +29,9 @@ export const useCompressorStore = defineStore('compressor', () => {
     try {
       isProcessing.value = true;
       results.value = null;
+      progress.value = 0;
+      currentFile.value = '';
+      status.value = '';
 
       const result = await compressor.compressPPTX(file, (progressData: ProgressData) => {
         progress.value = progressData.progress;
@@ -37,10 +40,16 @@ export const useCompressorStore = defineStore('compressor', () => {
       });
 
       results.value = result;
-    } catch (error) {
+    } catch (error: unknown) {
+      console.error('Compression error:', error);
+      status.value = `Error: ${error instanceof Error ? error.message : 'Unknown error'}`;
       throw error;
     } finally {
       isProcessing.value = false;
+      if (!results.value) {
+        progress.value = 0;
+        currentFile.value = '';
+      }
     }
   }
 

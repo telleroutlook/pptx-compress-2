@@ -17,6 +17,12 @@
     <link rel="preload" href="/src/style.css" as="style">
     <link rel="preload" href="/og-image.jpg" as="image" fetchpriority="high">
     <link rel="preload" href="/twitter-image.jpg" as="image" fetchpriority="low">
+    <link rel="preload" href="/wechat-image.jpg" as="image" fetchpriority="low">
+    <link rel="preload" href="/favicon.svg" as="image" fetchpriority="high">
+    <link rel="preload" href="/android-chrome-192x192.png" as="image" fetchpriority="low">
+    <link rel="preload" href="/apple-touch-icon.png" as="image" fetchpriority="low">
+    <link rel="preload" href="/byteslim_192.png" as="image" fetchpriority="low">
+    <link rel="preload" href="/byteslim_512.png" as="image" fetchpriority="low">
     
     <!-- Critical CSS -->
     <style>
@@ -84,6 +90,9 @@
     <meta property="og:title" content="Free PPTX Compressor - Reduce PowerPoint File Size Online">
     <meta property="og:description" content="Free online PPTX compressor tool. Reduce PowerPoint file size while maintaining quality. Fast, secure, and easy to use. No registration required.">
     <meta property="og:image" content="https://byteslim.com/og-image.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="ByteSlim PPTX Compressor">
     <meta property="og:site_name" content="ByteSlim">
     <meta property="og:locale" content="en_US">
 
@@ -93,7 +102,18 @@
     <meta property="twitter:title" content="Free PPTX Compressor - Reduce PowerPoint File Size Online">
     <meta property="twitter:description" content="Free online PPTX compressor tool. Reduce PowerPoint file size while maintaining quality. Fast, secure, and easy to use. No registration required.">
     <meta property="twitter:image" content="https://byteslim.com/twitter-image.jpg">
+    <meta property="twitter:image:alt" content="ByteSlim PPTX Compressor">
     <meta property="twitter:creator" content="@byteslim">
+
+    <!-- Responsive Images -->
+    <link rel="image_src" href="/og-image.jpg">
+    <link rel="image_src" href="/twitter-image.jpg">
+    <link rel="image_src" href="/wechat-image.jpg">
+    
+    <!-- Responsive Image Preload -->
+    <link rel="preload" as="image" href="/og-image.jpg" media="(min-width: 1200px)">
+    <link rel="preload" as="image" href="/twitter-image.jpg" media="(min-width: 768px) and (max-width: 1199px)">
+    <link rel="preload" as="image" href="/wechat-image.jpg" media="(max-width: 767px)">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://byteslim.com/">
@@ -104,6 +124,8 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+    <link rel="icon" type="image/png" sizes="512x512" href="/byteslim_512.png">
     <link rel="manifest" href="/site.webmanifest">
     <meta name="theme-color" content="#ffffff">
     
@@ -239,6 +261,12 @@
     <script>
       // Performance monitoring
       window.addEventListener('load', function() {
+        // Remove loading indicator
+        const loadingIndicator = document.querySelector('.loading');
+        if (loadingIndicator) {
+          loadingIndicator.style.display = 'none';
+        }
+
         setTimeout(function() {
           const timing = window.performance.timing;
           const loadTime = timing.loadEventEnd - timing.navigationStart;
