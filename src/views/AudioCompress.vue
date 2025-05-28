@@ -47,7 +47,7 @@
         <h3 class="text-lg font-semibold">Selected Files</h3>
         <button 
           v-if="!isProcessing"
-          @click="files = []" 
+          @click="() => { files = []; compressedResults = []; }" 
           class="text-sm text-red-500 hover:text-red-700 flex items-center"
         >
           <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
