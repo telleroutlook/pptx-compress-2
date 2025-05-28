@@ -111,9 +111,9 @@
     <link rel="image_src" href="/wechat-image.jpg">
     
     <!-- Responsive Image Preload -->
-    <link rel="preload" as="image" href="/og-image.jpg" media="(min-width: 1200px)">
-    <link rel="preload" as="image" href="/twitter-image.jpg" media="(min-width: 768px) and (max-width: 1199px)">
-    <link rel="preload" as="image" href="/wechat-image.jpg" media="(max-width: 767px)">
+    <link rel="preload" as="image" href="/og-image.jpg" type="image/jpeg" media="(min-width: 1200px)">
+    <link rel="preload" as="image" href="/twitter-image.jpg" type="image/jpeg" media="(min-width: 768px) and (max-width: 1199px)">
+    <link rel="preload" as="image" href="/wechat-image.jpg" type="image/jpeg" media="(max-width: 767px)">
 
     <!-- Canonical URL -->
     <link rel="canonical" href="https://byteslim.com/">
@@ -289,8 +289,5 @@
         // Report to error tracking service
       });
     </script>
-
-    <!-- Cloudflare Web Analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js'></script>
   </body>
 </html>
