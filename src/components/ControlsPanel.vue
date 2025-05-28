@@ -14,13 +14,10 @@
       </div>
       <div class="mode-description">
         <p v-if="modelValue.format === 'mp3'">
-          <strong>MP3</strong>: Most popular format with good compression. Compatible with all devices and platforms.
-        </p>
-        <p v-else-if="modelValue.format === 'aac'">
-          <strong>AAC</strong>: Better quality than MP3 at same bitrate. Used by Apple devices and streaming services.
+          <strong>MP3</strong>: Most compatible format. Good balance of quality and file size.
         </p>
         <p v-else-if="modelValue.format === 'wav'">
-          <strong>WAV</strong>: Uncompressed format with best quality but larger file size. Suitable for professional audio editing.
+          <strong>WAV</strong>: Uncompressed format. Best quality but largest file size.
         </p>
       </div>
     </div>
@@ -68,7 +65,7 @@ const emit = defineEmits<{
   (e: 'compress'): void
 }>();
 
-const formats = ['mp3', 'aac', 'wav'] as const;
+const formats = ['mp3', 'wav'] as const;
 const modes = ['balanced', 'aggressive', 'maximum'] as const;
 
 const updateSettings = (key: keyof Settings, value: any) => {

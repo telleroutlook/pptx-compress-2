@@ -239,7 +239,7 @@ const compressFiles = async () => {
   if (files.value.length === 0) return
   
   isProcessing.value = true
-  progress.value = 5
+  progress.value = 0
   compressedResults.value = []
   
   await scrollToElement('.progress-bar-section')
@@ -251,11 +251,12 @@ const compressFiles = async () => {
     
     for (const file of files.value) {
       currentFileName.value = file.name
-      const fileProgress = (processedSize / totalSize) * 90
+      const fileWeight = file.size / totalSize
+      const fileStartProgress = (processedSize / totalSize) * 100
       
       const result = await compressAudio(file, settings.value, (p) => {
-        const currentFileProgress = (file.size / totalSize) * 90 * (p / 100)
-        progress.value = 5 + fileProgress + currentFileProgress
+        const currentFileProgress = fileWeight * 100 * (p / 100)
+        progress.value = fileStartProgress + currentFileProgress
       })
       
       processedSize += file.size

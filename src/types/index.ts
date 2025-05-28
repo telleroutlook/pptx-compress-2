@@ -1,5 +1,5 @@
 export interface Settings {
-  format: 'mp3' | 'aac' | 'wav';
+  format: 'mp3' | 'wav';
   quality: number;
   bitRate: number;
   sampleRate: number;

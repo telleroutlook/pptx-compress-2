@@ -34,17 +34,16 @@ export function useAudioCompressor() {
           
           switch (data.type) {
             case 'progress':
-              const smoothProgress = 10 + (data.progress * 0.8);
-              onProgress(smoothProgress);
+              onProgress(data.progress);
               break;
               
             case 'complete':
               onProgress(100);
               resolve({
-                name: file.name,
+                name: `${file.name.split('.')[0]}_compressed.${data.result.outputFormat}`,
                 size: data.result.blob.size,
                 blob: data.result.blob,
-                type: 'audio/mp3',
+                type: `audio/${data.result.outputFormat}`,
                 originalSize: file.size,
                 duration: data.result.duration,
                 sampleRate: data.result.sampleRate,
