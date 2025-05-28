@@ -1,11 +1,11 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      name: 'pptx',
+      name: 'home',
       component: () => import('../views/PptxCompress.vue')
     },
     {
@@ -22,6 +22,11 @@ const router = createRouter({
       path: '/about',
       name: 'about',
       component: () => import('../views/About.vue')
+    },
+    {
+      path: '/projects',
+      name: 'projects',
+      component: () => import('../views/Projects.vue')
     }
   ]
 })
