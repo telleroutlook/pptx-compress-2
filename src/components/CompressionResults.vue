@@ -10,7 +10,7 @@
             </svg>
           </div>
           <span class="result-value">
-            {{ formatFileSize(results.stats.originalSize) }}
+            {{ formatFileSize(results.originalSize) }}
           </span>
           <span class="result-label">Original Size</span>
         </div>
@@ -21,7 +21,7 @@
             </svg>
           </div>
           <span class="result-value">
-            {{ formatFileSize(results.stats.compressedSize) }}
+            {{ formatFileSize(results.compressedSize) }}
           </span>
           <span class="result-label">Final Size</span>
         </div>
@@ -32,7 +32,7 @@
             </svg>
           </div>
           <span class="result-value success">
-            {{ results.stats.compressionRatio }}%
+            {{ ((results.originalSize - results.compressedSize) / results.originalSize * 100).toFixed(1) }}%
           </span>
           <span class="result-label">Space Saved</span>
         </div>
@@ -41,8 +41,8 @@
 
     <div class="text-center">
       <a
-        :href="downloadUrl"
-        :download="downloadFilename"
+        :href="results.downloadUrl"
+        :download="results.fileName"
         class="download-button"
       >
         <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -108,16 +108,6 @@ onMounted(() => {
   if (results.value) {
     scrollToResults();
   }
-});
-
-const downloadUrl = computed(() => {
-  if (!results.value?.compressedFile) return '';
-  return URL.createObjectURL(results.value.compressedFile);
-});
-
-const downloadFilename = computed(() => {
-  if (!results.value?.compressedFile) return '';
-  return results.value.compressedFile.name;
 });
 
 function formatFileSize(bytes) {
