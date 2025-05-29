@@ -4,16 +4,30 @@ import UniversalImageCompressor from './UniversalImageCompressor.js';
 class PPTXCompressor {
     constructor(options = {}) {
         this.compressionOptions = {
-            maxWidth: 1920,
-            maxHeight: 1080,
+            maxWidth: 1600,
+            maxHeight: 900,
             quality: 0.8,
-            format: 'jpeg',
+            format: 'webp',
             scale: 1,
             mode: 'balanced',
             ...options
         };
         this.pptxProcessor = new PPTXProcessor();
         this.imageCompressor = new UniversalImageCompressor(this.compressionOptions);
+        
+        console.log('[PPTXCompressor] Initialized with compression options:', this.compressionOptions);
+    }
+
+    getCompressionOptions() {
+        return { ...this.compressionOptions };
+    }
+
+    updateCompressionOptions(newOptions) {
+        this.compressionOptions = {
+            ...this.compressionOptions,
+            ...newOptions
+        };
+        console.log('[PPTXCompressor] Updated compression options:', this.compressionOptions);
     }
 
     async compressPPTX(pptxFile, progressCallback = null) {
