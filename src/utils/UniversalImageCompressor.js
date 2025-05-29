@@ -43,18 +43,15 @@ class UniversalImageCompressor {
     }
 
     async ensureValidFileObject(file) {
-        console.log('[UniversalImageCompressor] Validating file object:', file);
+        console.log(`[UniversalImageCompressor] Validating: ${file.name || 'unknown'} (${(file.size / 1024).toFixed(2)}KB)`);
         
         // 如果已经是 File 或 Blob 对象
         if (file instanceof File || file instanceof Blob) {
-            console.log('[UniversalImageCompressor] File is already a valid File/Blob object');
-            
             // 检查并修复文件类型
             if (file instanceof File && (!file.type || file.type === '')) {
-                console.log('[UniversalImageCompressor] Fixing empty file type');
                 const mimeType = this.getMimeType(file.name);
                 const newFile = new File([file], file.name, { type: mimeType });
-                console.log('[UniversalImageCompressor] New file type:', mimeType);
+                console.log(`[UniversalImageCompressor] Fixed type: ${file.name} → ${mimeType}`);
                 return newFile;
             }
             return file;
@@ -92,14 +89,14 @@ class UniversalImageCompressor {
         return new Promise((resolve, reject) => {
             // 对于矢量格式，返回默认尺寸
             if (this.isVectorFormat(file.name)) {
-                console.log(`[UniversalImageCompressor] Vector format detected for ${file.name}, using default dimensions`);
+                console.log(`[UniversalImageCompressor] Vector: ${file.name}`);
                 resolve({ width: 800, height: 600 }); // 默认尺寸
                 return;
             }
 
             // 对于特殊格式，返回默认尺寸
             if (this.isSpecialFormat(file.name)) {
-                console.log(`[UniversalImageCompressor] Special format detected for ${file.name}, using default dimensions`);
+                console.log(`[UniversalImageCompressor] Special: ${file.name}`);
                 resolve({ width: 800, height: 600 }); // 默认尺寸
                 return;
             }
@@ -115,7 +112,7 @@ class UniversalImageCompressor {
             };
             img.onerror = (error) => {
                 URL.revokeObjectURL(img.src);
-                console.error(`[UniversalImageCompressor] Error loading image ${file.name}:`, error);
+                console.error(`[UniversalImageCompressor] Error: ${file.name} - ${error.message}`);
                 // 对于加载失败的图片，返回默认尺寸
                 resolve({ width: 800, height: 600 });
             };
@@ -124,23 +121,17 @@ class UniversalImageCompressor {
     }
 
     async compressImage(file, settings = {}) {
-        console.log(`[UniversalImageCompressor] Starting compression for file: ${file.name || 'unknown'} (${(file.size / 1024).toFixed(2)}KB)`);
-        
         try {
             // 确保文件对象有效
             const validFile = await this.ensureValidFileObject(file);
-            console.log('[UniversalImageCompressor] File validation successful, type:', validFile.type);
-
-            // 检查文件类型
-            const fileExt = validFile.name.split('.').pop().toLowerCase();
             
             // 获取原始图片尺寸
             const originalDimensions = await this.getImageDimensions(validFile);
-            console.log(`[UniversalImageCompressor] Original dimensions: ${originalDimensions.width}x${originalDimensions.height}`);
+            console.log(`[UniversalImageCompressor] Process: ${validFile.name} (${(validFile.size / 1024).toFixed(2)}KB, ${originalDimensions.width}x${originalDimensions.height})`);
 
             // 检查小文件
             if (validFile.size < 1024) {
-                console.log(`[UniversalImageCompressor] Skipping small file: ${validFile.name} (${(validFile.size / 1024).toFixed(2)}KB)`);
+                console.log(`[UniversalImageCompressor] Skip: ${validFile.name} (small)`);
                 return {
                     name: validFile.name,
                     size: validFile.size,
@@ -156,7 +147,7 @@ class UniversalImageCompressor {
 
             // 检查矢量格式文件
             if (this.isVectorFormat(validFile.name)) {
-                console.log(`[UniversalImageCompressor] Skipping vector format file: ${validFile.name} (${(validFile.size / 1024).toFixed(2)}KB)`);
+                console.log(`[UniversalImageCompressor] Skip: ${validFile.name} (vector)`);
                 return {
                     name: validFile.name,
                     size: validFile.size,
@@ -172,7 +163,7 @@ class UniversalImageCompressor {
 
             // 检查特殊格式文件
             if (this.isSpecialFormat(validFile.name)) {
-                console.log(`[UniversalImageCompressor] Skipping special format file: ${validFile.name} (${(validFile.size / 1024).toFixed(2)}KB)`);
+                console.log(`[UniversalImageCompressor] Skip: ${validFile.name} (special)`);
                 return {
                     name: validFile.name,
                     size: validFile.size,
@@ -187,7 +178,7 @@ class UniversalImageCompressor {
             }
 
             if (!this.isFormatSupported(validFile.name)) {
-                console.log(`[UniversalImageCompressor] Skipping unsupported file: ${validFile.name} (${(validFile.size / 1024).toFixed(2)}KB)`);
+                console.log(`[UniversalImageCompressor] Skip: ${validFile.name} (unsupported)`);
                 return {
                     name: validFile.name,
                     size: validFile.size,
@@ -206,7 +197,6 @@ class UniversalImageCompressor {
                 ...this.options, 
                 ...settings
             };
-            console.log('[UniversalImageCompressor] Compression settings:', compressionSettings);
 
             // 根据压缩模式调整质量
             let quality = compressionSettings.quality;
@@ -215,49 +205,29 @@ class UniversalImageCompressor {
             } else if (compressionSettings.mode === 'maximum') {
                 quality *= 0.6;
             }
-            console.log(`[UniversalImageCompressor] Adjusted quality for mode ${compressionSettings.mode}: ${quality}`);
-
-            // 计算压缩后的尺寸
-            let finalWidth = originalDimensions.width;
-            let finalHeight = originalDimensions.height;
-
-            // 应用最大尺寸限制
-            if (finalWidth > compressionSettings.maxWidth) {
-                finalHeight = (compressionSettings.maxWidth * finalHeight) / finalWidth;
-                finalWidth = compressionSettings.maxWidth;
-            }
-            if (finalHeight > compressionSettings.maxHeight) {
-                finalWidth = (compressionSettings.maxHeight * finalWidth) / finalHeight;
-                finalHeight = compressionSettings.maxHeight;
-            }
-
-            // 应用缩放比例
-            if (compressionSettings.scale !== 1) {
-                finalWidth = Math.round(finalWidth * compressionSettings.scale);
-                finalHeight = Math.round(finalHeight * compressionSettings.scale);
-            }
-
-            console.log(`[UniversalImageCompressor] Target dimensions: ${finalWidth}x${finalHeight}`);
 
             // 设置 compressorjs 的选项
             const compressorOptions = {
+                strict: true,
                 maxWidth: compressionSettings.maxWidth,
                 maxHeight: compressionSettings.maxHeight,
                 quality: quality,
                 mimeType: `image/${compressionSettings.format}`,
-                convertSize: Infinity, // 禁用自动转换
+                resize: 'contain',
+                convertTypes: ['image/png', 'image/webp'],
+                convertSize: 5000000,
                 success: null,
                 error: null
             };
-            console.log('[UniversalImageCompressor] Compressor options:', compressorOptions);
+
+            console.log(`[UniversalImageCompressor] Compress: ${validFile.name} (${compressionSettings.mode}, q=${quality})`);
 
             return new Promise((resolve, reject) => {
                 const timeout = setTimeout(() => {
-                    console.error('[UniversalImageCompressor] Compression timeout');
+                    console.error('[UniversalImageCompressor] Timeout: ' + validFile.name);
                     reject(new Error('Compression timeout'));
                 }, 30000);
 
-                console.log('[UniversalImageCompressor] Starting compressor with file type:', validFile.type);
                 new Compressor(validFile, {
                     ...compressorOptions,
                     success(result) {
@@ -266,7 +236,7 @@ class UniversalImageCompressor {
                         
                         // 如果压缩后文件更大，返回原始文件
                         if (result.size >= validFile.size) {
-                            console.log(`[UniversalImageCompressor] Compression increased file size, using original file`);
+                            console.log(`[UniversalImageCompressor] Skip: ${validFile.name} (larger)`);
                             resolve({
                                 name: validFile.name,
                                 size: validFile.size,
@@ -281,21 +251,15 @@ class UniversalImageCompressor {
                             return;
                         }
 
-                        console.log(`[UniversalImageCompressor] Compression completed:
-                            - Original size: ${(validFile.size / 1024).toFixed(2)}KB
-                            - Compressed size: ${(result.size / 1024).toFixed(2)}KB
-                            - Compression ratio: ${compressionRatio}%
-                            - Output format: ${result.type}
-                            - Original dimensions: ${originalDimensions.width}x${originalDimensions.height}
-                            - Final dimensions: ${finalWidth}x${finalHeight}`);
+                        console.log(`[UniversalImageCompressor] Done: ${validFile.name} ${(validFile.size / 1024).toFixed(2)}KB → ${(result.size / 1024).toFixed(2)}KB (${compressionRatio}%)`);
                         
                         resolve({
                             name: validFile.name || 'compressed_image',
                             size: result.size,
                             blob: result,
                             originalSize: validFile.size,
-                            width: finalWidth,
-                            height: finalHeight,
+                            width: originalDimensions.width,
+                            height: originalDimensions.height,
                             hasTransparency: result.type === 'image/png',
                             outputFormat: result.type.split('/')[1],
                             compressionRatio: compressionRatio
@@ -303,7 +267,7 @@ class UniversalImageCompressor {
                     },
                     error(err) {
                         clearTimeout(timeout);
-                        console.error('[UniversalImageCompressor] Compression error:', err);
+                        console.error(`[UniversalImageCompressor] Error: ${validFile.name} - ${err.message}`);
                         reject(new Error(err.message));
                     }
                 });
@@ -315,13 +279,13 @@ class UniversalImageCompressor {
     }
 
     async compressBatch(files, settings = {}, progressCallback = null) {
-        console.log(`[UniversalImageCompressor] Starting batch compression for ${files.length} files`);
+        console.log(`[UniversalImageCompressor] Starting batch: ${files.length} files`);
         const results = [];
         const totalFiles = files.length;
 
         for (let i = 0; i < files.length; i++) {
             const file = files[i];
-            console.log(`[UniversalImageCompressor] Processing file ${i + 1}/${totalFiles}: ${file.name || 'unknown'}`);
+            console.log(`[UniversalImageCompressor] Processing ${i + 1}/${totalFiles}: ${file.name || 'unknown'}`);
             
             try {
                 if (progressCallback) {
@@ -336,10 +300,9 @@ class UniversalImageCompressor {
 
                 const result = await this.compressImage(file, settings);
                 results.push(result);
-                console.log(`[UniversalImageCompressor] Successfully processed: ${file.name || 'unknown'}`);
 
             } catch (error) {
-                console.error(`[UniversalImageCompressor] Failed to process ${file.name || 'unknown'}:`, error);
+                console.error(`[UniversalImageCompressor] Failed: ${file.name || 'unknown'} - ${error.message}`);
                 results.push({
                     name: file.name || `image_${i + 1}`,
                     error: error.message,
@@ -357,7 +320,7 @@ class UniversalImageCompressor {
             });
         }
 
-        console.log('[UniversalImageCompressor] Batch compression completed');
+        console.log(`[UniversalImageCompressor] Batch completed: ${results.length} files processed`);
         return results;
     }
 

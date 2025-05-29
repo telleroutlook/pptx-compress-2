@@ -10,6 +10,10 @@ class PPTXCompressor {
             format: 'webp',
             scale: 1,
             mode: 'balanced',
+            strict: true,
+            resize: 'contain',
+            convertTypes: ['image/png', 'image/webp'],
+            convertSize: 5000000,
             ...options
         };
         this.pptxProcessor = new PPTXProcessor();
