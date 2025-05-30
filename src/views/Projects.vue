@@ -62,31 +62,68 @@
                   </li>
                 </ul>
               </div>
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Technologies</h3>
-                <div class="flex flex-wrap gap-2">
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Next.js</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">React</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">TypeScript</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Tailwind CSS</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">ByteMD</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">CodeMirror</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">KaTeX</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Mermaid</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Radix UI</span>
-                  <span class="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Zustand</span>
-                </div>
-              </div>
             </div>
           </div>
         </div>
 
-        <!-- Placeholder for Future Projects -->
-        <div class="bg-gray-50 rounded-xl p-6 text-center">
-          <h3 class="text-xl font-semibold text-gray-800 mb-2">More Projects Coming Soon</h3>
-          <p class="text-gray-600">
-            We're constantly working on new tools and solutions. Stay tuned for more innovative projects!
-          </p>
+        <!-- MVKing Project -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+          <div class="p-6">
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="text-2xl font-bold text-gray-800">MVKing</h2>
+              <a 
+                href="https://mvking.com" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center"
+              >
+                <span>Visit Project</span>
+                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 mb-4">
+              MVKing is a cutting-edge music video discovery platform that brings together music enthusiasts and creators in an immersive digital experience.
+            </p>
+            <div class="space-y-4">
+              <div>
+                <h3 class="text-lg font-semibold text-gray-800 mb-2">Key Features</h3>
+                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                  <li class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Smart video recommendations and advanced search
+                  </li>
+                  <li class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    High-quality streaming with adaptive quality
+                  </li>
+                  <li class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Create and share playlists with friends
+                  </li>
+                  <li class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Cross-platform compatibility
+                  </li>
+                  <li class="flex items-center text-gray-600">
+                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                    Dedicated artist profiles and analytics
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
