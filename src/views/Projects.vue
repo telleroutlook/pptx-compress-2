@@ -30,7 +30,7 @@
               </a>
             </div>
             <p class="text-gray-600 mb-4">
-              A powerful online Markdown editor that supports various Markdown formats, mathematical formulas, and interactive charts. Perfect for technical documentation, academic writing, and content creation.
+              A modern, AI-era markdown editor designed for elegant content creation and versatile export capabilities. Perfect for handling AI-generated content, technical documentation, and academic writing with full support for mathematical formulas and diagrams.
             </p>
             <div class="space-y-4">
               <div>
@@ -40,25 +40,25 @@
                     <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Rich Markdown Support
+                    AI-Optimized Workflow
                   </li>
                   <li class="flex items-center text-gray-600">
                     <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Math Formula Rendering
+                    Multiple Export Formats
                   </li>
                   <li class="flex items-center text-gray-600">
                     <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Interactive Charts
+                    Advanced Math Support
                   </li>
                   <li class="flex items-center text-gray-600">
                     <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                     </svg>
-                    Real-time Preview
+                    Rich Content Support
                   </li>
                 </ul>
               </div>
