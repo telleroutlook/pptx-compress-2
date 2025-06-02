@@ -1,9 +1,26 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 import { resolve } from 'path';
+import ViteSitemap from 'vite-plugin-sitemap';
 
 export default defineConfig({
-  plugins: [vue()],
+  plugins: [
+    vue(),
+    ViteSitemap({
+      hostname: 'https://byteslim.com',
+      dynamicRoutes: [
+        '/',
+        '/pptx-compressor',
+        '/audio-compressor',
+        '/privacy',
+        '/terms',
+        '/about',
+        '/faq',
+        '/contact'
+      ],
+      outDir: 'dist'
+    }),
+  ],
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),

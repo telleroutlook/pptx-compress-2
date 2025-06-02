@@ -2,7 +2,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc && vite build",
+    "build": "vue-tsc && vite build && node scripts/generate-sitemap.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -23,6 +23,7 @@
     "tailwindcss": "^3.3.5",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
+    "vite-plugin-sitemap": "^0.8.2",
     "vue-tsc": "^2.2.10"
   }
 }
