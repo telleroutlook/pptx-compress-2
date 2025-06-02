@@ -37,4 +37,35 @@ Sitemap: https://byteslim.com/sitemap.xml
 Sitemap: https://byteslim.com/sitemap-index.xml
 
 # Host
-Host: https://byteslim.com 
+Host: https://byteslim.com
+
+# Additional SEO directives
+Clean-param: utm_source&utm_medium&utm_campaign&utm_term&utm_content
+Clean-param: ref&source&origin
+
+# Allow specific bots
+User-agent: Googlebot
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.gif$
+Allow: /*.ico$
+Allow: /*.svg$
+Allow: /*.woff$
+Allow: /*.woff2$
+Allow: /*.ttf$
+Allow: /*.eot$
+
+User-agent: Bingbot
+Allow: /*.js$
+Allow: /*.css$
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.gif$
+Allow: /*.ico$
+Allow: /*.svg$
+Allow: /*.woff$
+Allow: /*.woff2$
+Allow: /*.ttf$
+Allow: /*.eot$ 

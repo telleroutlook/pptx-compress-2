@@ -99,9 +99,12 @@
 import { ref, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useSeo } from './composables/useSeo'
+import { useStructuredData } from './composables/useStructuredData'
+import { useHead } from '@vueuse/head'
 
 const route = useRoute()
 const { updateSeo } = useSeo()
+const { updateStructuredData } = useStructuredData()
 const isMenuOpen = ref(false)
 
 const menuItems = [
@@ -140,10 +143,15 @@ const closeMenu = () => {
   isMenuOpen.value = false
 }
 
-// Close menu when route changes
-watch(() => route.path, () => {
-  closeMenu()
-})
+// Update SEO and structured data when route changes
+watch(
+  () => route.path,
+  () => {
+    closeMenu()
+    updateStructuredData()
+  },
+  { immediate: true }
+)
 
 // 监听路由变化，更新 SEO 信息
 watch(
@@ -155,6 +163,38 @@ watch(
   },
   { immediate: true }
 )
+
+useHead({
+  title: 'ByteSlim - PPTX Compress - Compress PowerPoint Files Online',
+  meta: [
+    {
+      name: 'description',
+      content: 'Free online tool to compress PowerPoint files while maintaining quality. Reduce PPTX file size easily and quickly.'
+    },
+    {
+      name: 'keywords',
+      content: 'PPTX compress, PowerPoint compression, reduce PPTX size, online PPTX compressor'
+    },
+    {
+      property: 'og:title',
+      content: 'ByteSlim - PPTX Compress - Compress PowerPoint Files Online'
+    },
+    {
+      property: 'og:description',
+      content: 'Free online tool to compress PowerPoint files while maintaining quality. Reduce PPTX file size easily and quickly.'
+    },
+    {
+      property: 'og:type',
+      content: 'website'
+    }
+  ],
+  link: [
+    {
+      rel: 'canonical',
+      href: 'https://byteslim.com'
+    }
+  ]
+})
 </script>
 
 <style scoped>
