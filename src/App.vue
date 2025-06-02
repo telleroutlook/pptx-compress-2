@@ -85,6 +85,26 @@
   </div>
 </template>
 
+<script setup lang="ts">
+import { watch } from 'vue'
+import { useRoute } from 'vue-router'
+import { useSeo } from './composables/useSeo'
+
+const route = useRoute()
+const { updateSeo } = useSeo()
+
+// 监听路由变化，更新 SEO 信息
+watch(
+  () => route.meta.seo,
+  (seo) => {
+    if (seo) {
+      updateSeo(seo)
+    }
+  },
+  { immediate: true }
+)
+</script>
+
 <style scoped>
 .router-link-active {
   color: var(--color-primary);

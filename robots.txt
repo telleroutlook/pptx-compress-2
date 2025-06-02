@@ -1,7 +1,9 @@
+# Global rules
 User-agent: *
 Allow: /
 Allow: /sitemap.xml
 Allow: /robots.txt
+Allow: /sitemap-index.xml
 
 # Disallow temporary files and uploads
 Disallow: /temp/
@@ -9,9 +11,30 @@ Disallow: /uploads/
 Disallow: /api/
 Disallow: /admin/
 Disallow: /private/
+Disallow: /cgi-bin/
+Disallow: /*?*
+Disallow: /*?
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.txt$
+Disallow: /*.js$
+Disallow: /*.css$
+Disallow: /*.png$
+Disallow: /*.jpg$
+Disallow: /*.gif$
+Disallow: /*.ico$
+Disallow: /*.svg$
+Disallow: /*.woff$
+Disallow: /*.woff2$
+Disallow: /*.ttf$
+Disallow: /*.eot$
 
 # Crawl-delay
 Crawl-delay: 10
 
-# Sitemap
-Sitemap: https://byteslim.com/sitemap.xml 
+# Sitemaps
+Sitemap: https://byteslim.com/sitemap.xml
+Sitemap: https://byteslim.com/sitemap-index.xml
+
+# Host
+Host: https://byteslim.com 
