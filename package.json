@@ -11,7 +11,6 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
-    "@vueuse/core": "^10.7.2",
     "@vueuse/head": "^2.0.0",
     "compressorjs": "^1.2.1",
     "file-saver": "^2.0.5",
@@ -25,12 +24,15 @@
   "devDependencies": {
     "@types/node": "^22.15.21",
     "@vitejs/plugin-vue": "^5.0.0",
+    "@vueuse/core": "^13.3.0",
     "autoprefixer": "^10.4.16",
     "date-fns": "^4.1.0",
     "postcss": "^8.4.31",
     "tailwindcss": "^3.3.5",
     "typescript": "^5.3.3",
     "vite": "^5.0.0",
+    "vite-plugin-compression": "^0.5.1",
+    "vite-plugin-pwa": "^1.0.0",
     "vite-plugin-sitemap": "^0.8.2",
     "vue-tsc": "^2.2.10"
   }
