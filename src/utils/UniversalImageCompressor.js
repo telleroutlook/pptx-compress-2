@@ -2,14 +2,24 @@ import Compressor from 'compressorjs';
 
 class UniversalImageCompressor {
     constructor(options = {}) {
-        this.options = options;
-        console.log('[UniversalImageCompressor] Initialized with options:', this.options);
+        this.options = {
+            maxWidth: 1600,
+            maxHeight: 900,
+            quality: 0.8,
+            format: 'webp',
+            scale: 1,
+            mode: 'balanced',
+            strict: true,
+            resize: 'contain',
+            convertTypes: ['image/png', 'image/webp'],
+            convertSize: 5000000,
+            ...options
+        };
     }
 
     isFormatSupported(filename) {
         const ext = filename.split('.').pop().toLowerCase();
         const supported = ['jpg', 'jpeg', 'png', 'webp', 'gif'].includes(ext);
-        console.log(`[UniversalImageCompressor] Format check for ${filename}: ${supported ? 'supported' : 'not supported'}`);
         return supported;
     }
 
@@ -50,17 +60,13 @@ class UniversalImageCompressor {
             // 检查并修复文件类型
             if (file instanceof File && (!file.type || file.type === '')) {
                 const mimeType = this.getMimeType(file.name);
-                const newFile = new File([file], file.name, { type: mimeType });
-                console.log(`[UniversalImageCompressor] Fixed type: ${file.name} → ${mimeType}`);
-                return newFile;
+                const newFile = new File([file], file.name, { type: mimeType });return newFile;
             }
             return file;
         }
 
         // 如果是字符串（URL），尝试获取文件
-        if (typeof file === 'string') {
-            console.log('[UniversalImageCompressor] Converting URL to File object');
-            try {
+        if (typeof file === 'string') {try {
                 const response = await fetch(file);
                 if (!response.ok) throw new Error('Failed to fetch file');
                 const blob = await response.blob();
@@ -74,9 +80,7 @@ class UniversalImageCompressor {
         }
 
         // 如果是其他类型，尝试转换为 Blob
-        try {
-            console.log('[UniversalImageCompressor] Attempting to convert to Blob');
-            const mimeType = this.getMimeType('converted_image.png');
+        try {const mimeType = this.getMimeType('converted_image.png');
             const blob = new Blob([file], { type: mimeType });
             return new File([blob], 'converted_image.png', { type: mimeType });
         } catch (error) {
@@ -88,16 +92,12 @@ class UniversalImageCompressor {
     async getImageDimensions(file) {
         return new Promise((resolve, reject) => {
             // 对于矢量格式，返回默认尺寸
-            if (this.isVectorFormat(file.name)) {
-                console.log(`[UniversalImageCompressor] Vector: ${file.name}`);
-                resolve({ width: 800, height: 600 }); // 默认尺寸
+            if (this.isVectorFormat(file.name)) {resolve({ width: 800, height: 600 }); // 默认尺寸
                 return;
             }
 
             // 对于特殊格式，返回默认尺寸
-            if (this.isSpecialFormat(file.name)) {
-                console.log(`[UniversalImageCompressor] Special: ${file.name}`);
-                resolve({ width: 800, height: 600 }); // 默认尺寸
+            if (this.isSpecialFormat(file.name)) {resolve({ width: 800, height: 600 }); // 默认尺寸
                 return;
             }
 
@@ -278,16 +278,11 @@ class UniversalImageCompressor {
         }
     }
 
-    async compressBatch(files, settings = {}, progressCallback = null) {
-        console.log(`[UniversalImageCompressor] Starting batch: ${files.length} files`);
-        const results = [];
+    async compressBatch(files, settings = {}, progressCallback = null) {const results = [];
         const totalFiles = files.length;
 
         for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            console.log(`[UniversalImageCompressor] Processing ${i + 1}/${totalFiles}: ${file.name || 'unknown'}`);
-            
-            try {
+            const file = files[i];try {
                 if (progressCallback) {
                     progressCallback({
                         progress: i / totalFiles,
@@ -318,15 +313,10 @@ class UniversalImageCompressor {
                 fileName: 'Batch processing completed',
                 status: 'Completed'
             });
-        }
-
-        console.log(`[UniversalImageCompressor] Batch completed: ${results.length} files processed`);
-        return results;
+        }return results;
     }
 
-    destroy() {
-        console.log('[UniversalImageCompressor] Instance destroyed');
-    }
+    destroy() {}
 }
 
 export default UniversalImageCompressor;

@@ -18,8 +18,6 @@ class PPTXCompressor {
         };
         this.pptxProcessor = new PPTXProcessor();
         this.imageCompressor = new UniversalImageCompressor(this.compressionOptions);
-        
-        console.log('[PPTXCompressor] Initialized with compression options:', this.compressionOptions);
     }
 
     getCompressionOptions() {
@@ -31,7 +29,6 @@ class PPTXCompressor {
             ...this.compressionOptions,
             ...newOptions
         };
-        console.log('[PPTXCompressor] Updated compression options:', this.compressionOptions);
     }
 
     async compressPPTX(pptxFile, progressCallback = null) {

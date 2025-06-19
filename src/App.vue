@@ -19,7 +19,7 @@
               :class="{ 'text-primary font-semibold': $route.path === item.path }"
             >
               <span class="flex items-center">
-                <component :is="item.icon" class="w-5 h-5 mr-2" />
+                <span class="w-5 h-5 mr-2 text-lg">{{ item.icon }}</span>
                 {{ item.name }}
               </span>
               <div v-if="$route.path === item.path" class="absolute bottom-0 left-0 w-full h-0.5 bg-primary"></div>
@@ -80,7 +80,7 @@
                 @click="closeMenu"
               >
                 <span class="flex items-center">
-                  <component :is="item.icon" class="w-5 h-5 mr-2" />
+                  <span class="w-5 h-5 mr-2 text-lg">{{ item.icon }}</span>
                   {{ item.name }}
                 </span>
               </router-link>
@@ -111,27 +111,27 @@ const menuItems = [
   {
     name: 'PPT Compression',
     path: '/',
-    icon: 'DocumentIcon'
+    icon: '📄'
   },
   {
     name: 'Audio Compression',
     path: '/audio',
-    icon: 'MusicIcon'
+    icon: '🎵'
   },
   {
     name: 'Our Projects',
     path: '/projects',
-    icon: 'FolderIcon'
+    icon: '📁'
   },
   {
     name: 'FAQ',
     path: '/faq',
-    icon: 'QuestionMarkCircleIcon'
+    icon: '❓'
   },
   {
     name: 'About',
     path: '/about',
-    icon: 'InformationCircleIcon'
+    icon: 'ℹ️'
   }
 ]
 

@@ -21,7 +21,9 @@ export default defineConfig({
         name: 'ByteSlim',
         short_name: 'ByteSlim',
         description: 'PPTX Compression Tool',
-        theme_color: '#ffffff',
+        theme_color: '#667eea',
+        background_color: '#ffffff',
+        display: 'standalone',
         icons: [
           {
             src: 'pwa-192x192.png',
@@ -32,6 +34,21 @@ export default defineConfig({
             src: 'pwa-512x512.png',
             sizes: '512x512',
             type: 'image/png'
+          }
+        ]
+      },
+      workbox: {
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/fonts\.googleapis\.com\/.*/i,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'google-fonts-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 60 * 60 * 24 * 365 // 365 days
+              }
+            }
           }
         ]
       }
@@ -52,11 +69,12 @@ export default defineConfig({
     port: 3000,
     host: true,
     strictPort: true,
+    cors: true,
     hmr: {
       host: 'localhost',
-      port: 3000,
+      port: 3001,
       protocol: 'ws',
-      clientPort: 3000,
+      clientPort: 3001,
       timeout: 5000,
       overlay: true,
     },
@@ -64,33 +82,45 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       css: {
-        charset: false, // Avoid charset issues
+        charset: false,
       },
     },
-    // Explicitly configure PostCSS for Tailwind
-    postcss: './postcss.config.js', // Ensure PostCSS config is used
-    devSourcemap: true, // Enable source maps for easier debugging in dev
+    postcss: './postcss.config.js',
+    devSourcemap: true,
   },
-  assetsInclude: ['**/*.css'], // Treat .css files as assets
+  assetsInclude: ['**/*.css'],
   build: {
+    target: 'es2015',
     rollupOptions: {
       output: {
         assetFileNames: (assetInfo) => {
-          if (assetInfo.name.endsWith('.css')) {
-            return 'assets/[name][extname]';
+          if (assetInfo.name?.endsWith('.css')) {
+            return 'assets/[name]-[hash][extname]';
           }
           return 'assets/[name]-[hash][extname]';
         },
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js'
       },
     },
-    assetsInlineLimit: 4096, // 4kb
-    chunkSizeWarningLimit: 1000,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 500,
     minify: 'terser',
     terserOptions: {
       compress: {
         drop_console: true,
-        drop_debugger: true
+        drop_debugger: true,
+        pure_funcs: ['console.log']
+      },
+      format: {
+        comments: false
       }
-    }
+    },
+    reportCompressedSize: false,
+    sourcemap: false
   },
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'pinia', '@vueuse/head'],
+    exclude: ['vue-demi']
+  }
 });

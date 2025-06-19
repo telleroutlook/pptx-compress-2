@@ -40,3 +40,17 @@ lerna-debug.log*
 package-lock.json
 yarn.lock 
 0/
+
+# Performance monitoring
+*.perf
+.performance/
+
+# Build cache
+.cache/
+.temp/
+
+# PWA
+sw.js
+sw.js.map
+workbox-*.js
+workbox-*.js.map

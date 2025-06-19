@@ -6,8 +6,7 @@
   --primary: #667eea;
   --primary-dark: #764ba2;
   --secondary: #10b981;
-  --gradient-start: #667eea;
-  --gradient-end: #764ba2;
+  --primary-light: #8da8f5;
 }
 
 @layer base {
