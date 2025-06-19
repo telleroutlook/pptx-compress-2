@@ -1,129 +1,195 @@
 <template>
   <div class="container">
     <SeoHead
-      title="Our Projects - Innovative Web Tools and Solutions"
-      description="Explore our collection of innovative web tools and solutions, including our advanced Markdown editor with math formula and chart support."
+      title="Project Portfolio - Innovative Digital Solutions"
+      description="Explore our constellation of digital experiences where ancient wisdom meets cutting-edge technology. Discover innovative products and services designed to enhance your digital life."
       type="CollectionPage"
     />
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-3 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">Our Projects</h1>
-      <p class="subtitle">Discover our innovative web tools and solutions</p>
+    
+    <!-- Header Section -->
+    <header class="text-center mb-12">
+      <h1 class="text-5xl font-bold mb-4 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
+        🌟 Project Portfolio
+      </h1>
+      <p class="text-xl text-gray-600 italic mb-8">
+        Explore Our Innovative Products and Services
+      </p>
+      <div class="max-w-3xl mx-auto">
+        <p class="text-lg text-gray-700 leading-relaxed">
+          Welcome to our constellation of digital experiences, where ancient wisdom meets cutting-edge technology. 
+          Each project represents a unique journey of innovation, designed to enhance and simplify your digital life.
+        </p>
+      </div>
     </header>
 
-    <div class="max-w-4xl mx-auto">
-      <div class="grid gap-8">
-        <!-- Markdown Editor Project -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-2xl font-bold text-gray-800">Markdown Editor</h2>
+    <div class="max-w-6xl mx-auto">
+      <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-1">
+        
+        <!-- Mystic Tarot -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">✨ Mystic Tarot</h2>
+                <h3 class="text-xl font-semibold text-primary">🎴 Professional Tarot Reading Platform</h3>
+              </div>
               <a 
-                href="https://mdeditor.uk" 
+                href="https://teller.eu.org/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
-                <span>Visit Project</span>
-                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                 </svg>
               </a>
             </div>
-            <p class="text-gray-600 mb-4">
-              A modern, AI-era markdown editor designed for elegant content creation and versatile export capabilities. Perfect for handling AI-generated content, technical documentation, and academic writing with full support for mathematical formulas and diagrams.
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Unveil your destiny with the ancient wisdom of the cards through our multilingual divination platform with multiple spreads and intelligent card interpretation.
             </p>
-            <div class="space-y-4">
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Key Features</h3>
-                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    AI-Optimized Workflow
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Multiple Export Formats
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Advanced Math Support
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Rich Content Support
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </div>
 
-        <!-- MVKing Project -->
-        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
-          <div class="p-6">
-            <div class="flex items-center justify-between mb-4">
-              <h2 class="text-2xl font-bold text-gray-800">MVKing</h2>
+        <!-- ID Photo Generator -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">📸 ID Photo Generator</h2>
+                <h3 class="text-xl font-semibold text-primary">AI-Powered Professional Photo Solution</h3>
+              </div>
               <a 
-                href="https://mvking.com" 
+                href="https://idphotographic.com/" 
                 target="_blank" 
                 rel="noopener noreferrer"
-                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
-                <span>Visit Project</span>
-                <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                 </svg>
               </a>
             </div>
-            <p class="text-gray-600 mb-4">
-              MVKing is a cutting-edge music video discovery platform that brings together music enthusiasts and creators in an immersive digital experience.
+            <p class="text-gray-600 text-lg leading-relaxed">
+              AI-powered professional passport and ID photo generator with intelligent cropping and background removal.
             </p>
-            <div class="space-y-4">
-              <div>
-                <h3 class="text-lg font-semibold text-gray-800 mb-2">Key Features</h3>
-                <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Smart video recommendations and advanced search
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    High-quality streaming with adaptive quality
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Create and share playlists with friends
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Cross-platform compatibility
-                  </li>
-                  <li class="flex items-center text-gray-600">
-                    <svg class="w-5 h-5 text-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                    </svg>
-                    Dedicated artist profiles and analytics
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
+        </div>
+
+        <!-- Markdown Editor -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">📝 Markdown Editor</h2>
+                <h3 class="text-xl font-semibold text-primary">Professional Writing Environment</h3>
+              </div>
+              <a 
+                href="https://mdeditor.uk/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
+              >
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Powerful online Markdown editor with live preview and export capabilities.
+            </p>
+          </div>
+        </div>
+
+        <!-- MVKing -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">🎬 MVKing</h2>
+                <h3 class="text-xl font-semibold text-primary">Multimedia Processing Innovation</h3>
+              </div>
+              <a 
+                href="https://mvking.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
+              >
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Innovative multimedia processing platform providing professional tools for content creation.
+            </p>
+          </div>
+        </div>
+
+        <!-- CalculateToday -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">🧮 CalculateToday</h2>
+                <h3 class="text-xl font-semibold text-primary">Comprehensive Calculator Suite</h3>
+              </div>
+              <a 
+                href="https://calculatetoday.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
+              >
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Free online calculator collection covering finance, health, lifestyle and more.
+            </p>
+          </div>
+        </div>
+
+        <!-- TrustAvo -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">📧 TrustAvo</h2>
+                <h3 class="text-xl font-semibold text-primary">Privacy-First Email Security</h3>
+              </div>
+              <a 
+                href="https://trustavo.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
+              >
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Secure temporary mailbox service to protect your privacy and email security.
+            </p>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Closing Statement -->
+      <div class="text-center mt-16 mb-8">
+        <div class="bg-gradient-to-r from-primary/5 to-secondary/5 rounded-2xl p-8 border border-gray-100">
+          <p class="text-lg text-white leading-relaxed italic max-w-4xl mx-auto">
+            Each project represents our dedication to transforming complex technologies into accessible, 
+            elegant solutions that enhance daily life.
+          </p>
         </div>
       </div>
     </div>
