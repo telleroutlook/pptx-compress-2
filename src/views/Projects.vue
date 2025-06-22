@@ -36,7 +36,6 @@
               <a 
                 href="https://teller.eu.org/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -62,7 +61,6 @@
               <a 
                 href="https://idphotographic.com/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -88,7 +86,6 @@
               <a 
                 href="https://mdeditor.uk/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -114,7 +111,6 @@
               <a 
                 href="https://mvking.com/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -140,7 +136,6 @@
               <a 
                 href="https://calculatetoday.com/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -166,7 +161,6 @@
               <a 
                 href="https://trustavo.com/" 
                 target="_blank" 
-                rel="noopener noreferrer"
                 class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
               >
                 <span>Visit Website</span>
@@ -177,6 +171,31 @@
             </div>
             <p class="text-gray-600 text-lg leading-relaxed">
               Secure temporary mailbox service to protect your privacy and email security.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3WE -->
+        <div class="bg-white rounded-xl shadow-lg overflow-hidden transform transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border border-gray-100">
+          <div class="p-8">
+            <div class="flex items-center justify-between mb-6">
+              <div>
+                <h2 class="text-3xl font-bold text-gray-800 mb-2">🔧 3WE</h2>
+                <h3 class="text-xl font-semibold text-primary">Web Excellence</h3>
+              </div>
+              <a 
+                href="https://3we.org/" 
+                target="_blank" 
+                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors duration-200 flex items-center font-medium"
+              >
+                <span>Visit Website</span>
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+                </svg>
+              </a>
+            </div>
+            <p class="text-gray-600 text-lg leading-relaxed">
+              Comprehensive suite of professional-grade SEO tools designed for web excellence. Generate keywords, sitemaps, analyze readability, create robots.txt files, and optimize headlines for maximum search performance.
             </p>
           </div>
         </div>
